@@ -10,11 +10,23 @@ const capturedList = document.getElementById('capturedList');
 const continueBtn = document.getElementById('continueBtn');
 const filters = document.getElementById('filters');
 const finalCanvas = document.getElementById('finalCanvas');
+const framePicker = document.getElementById('framePicker');
+const downloadBtn = document.getElementById('downloadBtn');
 
 let stream = null;
 let capturedImages = [];
 let selectedFilter = 'none';
+let selectedFrame = 0;
 let maxPhotos = 4;
+
+const FRAMES = [
+  { name: 'Không khung', border: null, overlay: null },
+  { name: 'Khung Hồng', border: '#ffb6d5', overlay: null },
+  { name: 'Khung Xanh', border: '#b2f7ef', overlay: null },
+  { name: 'Sticker Tim', border: null, overlay: '❤️' },
+  { name: 'Sticker Ngôi Sao', border: null, overlay: '⭐' },
+  { name: 'Chữ "PhotoXinhh"', border: null, overlay: 'PhotoXinhh 💕' },
+];
 
 // Hiệu ứng nút
 [manualBtn, autoBtn, retryBtn].forEach(btn => {
@@ -29,8 +41,16 @@ async function startCamera() {
     stream = await navigator.mediaDevices.getUserMedia({ video: true });
     video.srcObject = stream;
     video.play();
+    document.getElementById('cameraError').style.display = 'none';
   } catch (e) {
-    alert('Không thể truy cập camera!');
+    document.getElementById('cameraError').style.display = 'block';
+    document.getElementById('cameraError').innerHTML =
+      'Không thể truy cập camera!<br>\uD83D\uDEAB<br>\u003Cul style="text-align:left;font-size:14px;line-height:1.5;max-width:220px;margin:8px auto 0 auto;"\u003E' +
+      '<li>Kiểm tra quyền truy cập camera trên trình duyệt.</li>' +
+      '<li>Nên chạy trang web qua localhost hoặc server, không mở file trực tiếp.</li>' +
+      '<li>Đảm bảo không có ứng dụng khác đang sử dụng camera.</li>' +
+      '<li>Nếu vẫn lỗi, hãy thử tải ảnh lên từ máy.</li>' +
+      '\u003C/ul\u003E';
   }
 }
 
@@ -100,6 +120,7 @@ manualBtn.onclick = () => {
   if (img) {
     capturedImages.push(img);
     renderCapturedList();
+    updateStatus();
   }
 };
 
@@ -112,9 +133,10 @@ retryBtn.onclick = () => {
 // Chụp auto
 autoBtn.onclick = async () => {
   if (capturedImages.length >= maxPhotos) return;
-  let countdown = parseInt(document.getElementById('countdown').value) || 0;
+  let countdownVal = parseInt(document.getElementById('countdown').value) || 0;
   for (let i = capturedImages.length; i < maxPhotos; i++) {
-    if (countdown > 0) {
+    let countdown = countdownVal;
+    while (countdown > 0) {
       autoBtn.innerText = countdown + 's';
       await new Promise(r => setTimeout(r, 1000));
       countdown--;
@@ -124,10 +146,17 @@ autoBtn.onclick = async () => {
     if (img) {
       capturedImages.push(img);
       renderCapturedList();
+      updateStatus();
     }
+    await new Promise(r => setTimeout(r, 400)); // nghỉ 1 chút giữa các lần chụp
   }
   autoBtn.innerText = 'AUTO';
 };
+
+function updateStatus() {
+  const status = document.getElementById('status');
+  status.textContent = `Đã Chụp ${capturedImages.length}/${maxPhotos}`;
+}
 
 // Tải ảnh lên
 uploadBtn.onclick = () => fileInput.click();
@@ -154,12 +183,30 @@ filters.onclick = e => {
   }
 };
 
-// Ghép ảnh thành 1 ảnh dài
+// --- Trang trí khung ảnh sau khi chụp đủ 4 ảnh ---
 continueBtn.onclick = () => {
   if (capturedImages.length < maxPhotos) {
     alert('Bạn cần đủ ' + maxPhotos + ' ảnh!');
     return;
   }
+  // Hiện chọn khung
+  framePicker.innerHTML = FRAMES.map((f, i) => `<button class="frame-btn${i===0?' selected':''}" data-idx="${i}">${f.name}</button>`).join('');
+  framePicker.style.display = 'flex';
+  downloadBtn.style.display = 'none';
+  selectedFrame = 0;
+  framePicker.querySelectorAll('.frame-btn').forEach(btn => {
+    btn.onclick = () => {
+      framePicker.querySelectorAll('.frame-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedFrame = +btn.dataset.idx;
+      renderFinalImage();
+    };
+  });
+  renderFinalImage();
+};
+
+function renderFinalImage() {
+  // Ghép ảnh và vẽ khung/trang trí
   const imgEls = [];
   let loaded = 0;
   capturedImages.forEach((src, i) => {
@@ -180,16 +227,34 @@ continueBtn.onclick = () => {
     let y = 0;
     imgEls.forEach(img => {
       ctx.drawImage(img, 0, y, w, img.height);
+      // Vẽ border nếu có
+      if (FRAMES[selectedFrame].border) {
+        ctx.save();
+        ctx.strokeStyle = FRAMES[selectedFrame].border;
+        ctx.lineWidth = 10;
+        ctx.strokeRect(5, y+5, w-10, img.height-10);
+        ctx.restore();
+      }
+      // Vẽ overlay nếu có
+      if (FRAMES[selectedFrame].overlay) {
+        ctx.save();
+        ctx.font = '32px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = '#ff4b91';
+        ctx.fillText(FRAMES[selectedFrame].overlay, w/2, y+12);
+        ctx.restore();
+      }
       y += img.height;
     });
-    // Hiện canvas và cho phép tải về
     finalCanvas.style.display = 'block';
-    const link = document.createElement('a');
-    link.href = finalCanvas.toDataURL('image/png');
-    link.download = 'photobooth.png';
-    link.click();
-    finalCanvas.style.display = 'none';
+    downloadBtn.href = finalCanvas.toDataURL('image/png');
+    downloadBtn.style.display = 'block';
   }
+}
+
+downloadBtn.onclick = () => {
+  downloadBtn.download = 'photobooth.png';
 };
 
 // Đổi số lượng ảnh
@@ -198,6 +263,7 @@ photoCount.onchange = () => {
   maxPhotos = parseInt(photoCount.value);
   capturedImages = [];
   renderCapturedList();
+  updateStatus();
 };
 
 // Hiệu ứng cho uploadBtn
@@ -207,3 +273,4 @@ uploadBtn.onmouseup = uploadBtn.onmouseleave = () => uploadBtn.style.transform =
 // Khởi tạo
 renderCapturedList();
 updateRetryBtn();
+updateStatus();
