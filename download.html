@@ -6,16 +6,49 @@
   <title>Tải ảnh Photobooth</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .download-img-item { margin: 18px 0; text-align: center; }
-    .download-img-item img { max-width: 220px; border-radius: 14px; box-shadow: 0 2px 8px #b2f7ef; margin-bottom: 8px; }
-    .download-img-item a { display: block; margin: 6px auto 0 auto; color: #3bb6c5; font-weight: bold; text-decoration: underline; }
+    /* Tạm thời giữ lại style cũ cho nút xóa */
     .download-clear-btn { background: #ff6f91; color: #fff; border: none; border-radius: 12px; padding: 10px 24px; font-size: 16px; margin: 24px auto 0 auto; display: block; cursor: pointer; }
     .download-clear-btn:hover { background: #ff4778; }
   </style>
 </head>
 <body>
-  <h1 class="photobooth-title">PhotoXinhh</h1>
-  <div id="downloadContainer"></div>
+  <header class="download-header">
+    <img src="logo.png" alt="Logo" class="download-logo" />
+    <h1 class="photobooth-title">PhotoXinhh</h1>
+    <div class="download-frame-select">
+      <label for="frameSelect">Chọn khung:</label>
+      <select id="frameSelect">
+        <option value="none">Không khung</option>
+        <option value="frame1">Khung Pastel 1</option>
+        <option value="frame2">Khung Pastel 2</option>
+      </select>
+    </div>
+  </header>
+  <main class="download-main photobooth-wrapper">
+    <section class="download-preview photobooth-left">
+      <h2 class="photobooth-sub">Preview</h2>
+      <div id="previewArea" class="preview-area">
+        <!-- Ảnh ghép sẽ hiển thị ở đây -->
+      </div>
+      <button id="downloadBtn" class="photobooth-btn">Tải ảnh về</button>
+      <button id="clearBtn" class="download-clear-btn">Xóa tất cả ảnh</button>
+    </section>
+    <section class="download-frames photobooth-center">
+      <h2 class="photobooth-sub">Chọn khung</h2>
+      <div class="frame-list">
+        <img src="frame1.png" alt="Khung 1" class="frame-thumb" data-frame="frame1" />
+        <img src="frame2.png" alt="Khung 2" class="frame-thumb" data-frame="frame2" />
+      </div>
+    </section>
+    <section class="download-stickers photobooth-right">
+      <h2 class="photobooth-sub">Sticker</h2>
+      <div class="sticker-list">
+        <img src="sticker1.png" alt="Sticker 1" class="sticker-thumb" draggable="true" />
+        <img src="sticker2.png" alt="Sticker 2" class="sticker-thumb" draggable="true" />
+        <!-- Thêm sticker khác nếu muốn -->
+      </div>
+    </section>
+  </main>
   <script src="download.js"></script>
 </body>
 </html>
