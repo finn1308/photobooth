@@ -158,6 +158,7 @@ manualBtn.onclick = () => {
     capturedImages.push(img);
     renderCapturedList();
     updateStatus();
+    saveImagesToLocalStorage();
     checkShowFramePopup();
   }
 };
@@ -166,6 +167,7 @@ manualBtn.onclick = () => {
 retryBtn.onclick = () => {
   capturedImages = [];
   renderCapturedList();
+  saveImagesToLocalStorage();
 };
 
 // Chụp auto
@@ -185,6 +187,7 @@ autoBtn.onclick = async () => {
       capturedImages.push(img);
       renderCapturedList();
       updateStatus();
+      saveImagesToLocalStorage();
       checkShowFramePopup();
     }
     await new Promise(r => setTimeout(r, 400)); // nghỉ 1 chút giữa các lần chụp
@@ -345,78 +348,18 @@ photoCount.onchange = () => {
   capturedImages = [];
   renderCapturedList();
   updateStatus();
+  saveImagesToLocalStorage();
 };
 
 // Hiệu ứng cho uploadBtn
 uploadBtn.onmousedown = () => uploadBtn.style.transform = 'scale(0.96)';
 uploadBtn.onmouseup = uploadBtn.onmouseleave = () => uploadBtn.style.transform = 'scale(1)';
 
-// Khi chụp đủ ảnh, hiện popup chọn khung, sticker
-function showFramePopup() {
-  const popup = document.createElement('div');
-  popup.className = 'frame-popup';
-  popup.innerHTML = `
-    <div class="frame-popup-content">
-      <button class="close-frame-popup">×</button>
-      <h2>Chọn Khung & Sticker</h2>
-      <div class="frame-list" id="frameList"></div>
-      <div class="sticker-list" id="stickerList"></div>
-      <button class="download-btn" id="popupDownloadBtn">Tải ảnh về để in</button>
-    </div>
-  `;
-  document.body.appendChild(popup);
-  document.body.style.overflow = 'hidden';
-  // Đóng popup
-  popup.querySelector('.close-frame-popup').onclick = () => {
-    popup.remove();
-    document.body.style.overflow = '';
-  };
-  // Render khung mẫu
-  const frames = [
-    {name:'Không khung', src:null},
-    {name:'Khung Xanh', src:'frame1.png'},
-    {name:'Khung Hồng', src:'frame2.png'}
-  ];
-  const frameList = popup.querySelector('#frameList');
-  frames.forEach((f,i) => {
-    const btn = document.createElement('button');
-    btn.className = 'frame-thumb';
-    btn.innerHTML = f.src ? `<img src="${f.src}" alt="${f.name}">` : f.name;
-    btn.onclick = () => {
-      frameList.querySelectorAll('.selected').forEach(b=>b.classList.remove('selected'));
-      btn.classList.add('selected');
-      popup.selectedFrame = f.src;
-    };
-    if(i===0) btn.classList.add('selected');
-    frameList.appendChild(btn);
-  });
-  popup.selectedFrame = null;
-  // Render sticker mẫu
-  const stickers = ['❤️','⭐','🎉','😆','🌸'];
-  const stickerList = popup.querySelector('#stickerList');
-  stickers.forEach((s,i) => {
-    const btn = document.createElement('button');
-    btn.className = 'sticker-thumb';
-    btn.textContent = s;
-    btn.onclick = () => {
-      btn.classList.toggle('selected');
-    };
-    stickerList.appendChild(btn);
-  });
-  // Tải ảnh về
-  popup.querySelector('#popupDownloadBtn').onclick = () => {
-    // Ghép ảnh với khung và sticker (demo: chỉ tải ảnh gốc)
-    const link = document.createElement('a');
-    link.href = finalCanvas.toDataURL('image/png');
-    link.download = 'photobooth.png';
-    link.click();
-  };
-}
-
-// Khi chụp đủ ảnh, show popup chọn khung
+// Khi chụp đủ số ảnh (2, 3, 4 tuỳ chọn), show popup chọn khung
 function checkShowFramePopup() {
   if (capturedImages.length === maxPhotos) {
-    setTimeout(showFramePopup, 500);
+    saveImagesToLocalStorage();
+    window.location.href = 'download.html'; // hoặc '/download' nếu deploy trên web thật
   }
 }
 
@@ -424,3 +367,17 @@ function checkShowFramePopup() {
 renderCapturedList();
 updateRetryBtn();
 updateStatus();
+
+function saveImagesToLocalStorage() {
+  localStorage.setItem('photobooth_images', JSON.stringify(capturedImages));
+}
+
+// Khi tải trang, kiểm tra và phục hồi ảnh từ localStorage nếu có
+window.onload = () => {
+  const storedImages = JSON.parse(localStorage.getItem('photobooth_images'));
+  if (storedImages && storedImages.length > 0) {
+    capturedImages = storedImages;
+    renderCapturedList();
+    updateStatus();
+  }
+};
