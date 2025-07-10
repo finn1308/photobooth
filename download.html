@@ -4,14 +4,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tải ảnh Photobooth</title>
-  <link rel="stylesheet" href="download.css">
   <style>
-    /* Tạm thời giữ lại style cũ cho nút xóa */
-    .download-clear-btn { background: #ff6f91; color: #fff; border: none; border-radius: 12px; padding: 10px 24px; font-size: 16px; margin: 24px auto 0 auto; display: block; cursor: pointer; }
-    .download-clear-btn:hover { background: #ff4778; }
+    body {
+      background: #fff6fa;
+      font-family: 'Comic Sans MS', 'Pacifico', cursive, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #7ed6df;
+    }
+    .download-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: #ffe0f0;
+      padding: 24px 0 12px 0;
+      box-shadow: 0 2px 12px #ffd6f7;
+    }
+    .photobooth-title {
+      font-family: 'Pacifico', cursive;
+      font-size: 38px;
+      color: #7ed6df;
+      margin: 0 0 4px 0;
+      letter-spacing: 2px;
+    }
     .continue-btn {
       background: linear-gradient(135deg, #ffe0f0 0%, #ffd6f7 100%);
-      color: #ff6f91;
+      color: #7ed6df;
       border: none;
       border-radius: 18px;
       padding: 18px 36px 10px 36px;
@@ -30,7 +49,7 @@
       font-family: 'Comic Sans MS', cursive, sans-serif;
       font-weight: normal;
       margin-top: 2px;
-      color: #ff6f91;
+      color: #7ed6df;
       opacity: 0.8;
     }
     .continue-btn:hover {
@@ -38,19 +57,51 @@
     }
     .download-status {
       text-align: center;
-      color: #ff6f91;
+      color: #7ed6df;
       font-size: 18px;
       margin-top: 18px;
       margin-bottom: 0;
       font-family: 'Comic Sans MS', cursive, sans-serif;
     }
+    .photobooth-btn {
+      background: linear-gradient(135deg, #ffe0f0 0%, #ffd6f7 100%);
+      color: #7ed6df;
+      border: none;
+      border-radius: 18px;
+      padding: 14px 36px 10px 36px;
+      font-size: 20px;
+      font-family: 'Pacifico', cursive;
+      font-weight: bold;
+      margin: 18px auto 0 auto;
+      display: block;
+      box-shadow: 0 2px 16px #ffd6f7;
+      text-align: center;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .photobooth-btn:hover {
+      background: #ffeaf7;
+    }
+    .download-clear-btn { background: #7ed6df; color: #fff; border: none; border-radius: 12px; padding: 10px 24px; font-size: 16px; margin: 24px auto 0 auto; display: block; cursor: pointer; }
+    .download-clear-btn:hover { background: #ff4778; }
+    .download-main { display: flex; justify-content: center; align-items: flex-start; margin-top: 24px; }
+    .download-preview { background: #fffafd; border-radius: 18px; box-shadow: 0 2px 16px #ffd6f7; padding: 18px 18px 24px 18px; margin-right: 18px; min-width: 380px; }
+    .download-frames, .download-stickers { background: #fffafd; border-radius: 18px; box-shadow: 0 2px 16px #ffd6f7; padding: 18px 18px 24px 18px; min-width: 220px; margin-right: 18px; }
+    .download-frames { min-width: 260px; }
+    .download-stickers { min-width: 180px; }
+    .photobooth-sub { color: #7ed6df; font-size: 22px; font-weight: bold; text-align: center; margin: 0 0 18px 0; }
+    .frame-list { display: flex; align-items: center; gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+    .frame-thumb { width: 60px; height: 80px; object-fit: contain; border-radius: 8px; border: 2px solid #ffd6f7; cursor: pointer; transition: border 0.2s; }
+    .frame-thumb.selected, .frame-thumb:hover { border: 2px solid #7ed6df; }
+    .sticker-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .sticker-thumb { width: 48px; height: 48px; object-fit: contain; border-radius: 8px; border: 2px solid #ffd6f7; cursor: grab; background: #fff; }
+    .sticker-thumb:hover { border: 2px solid #7ed6df; }
+    .preview-area { min-height: 1040px; min-width: 360px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; background: #fffafd; border-radius: 12px; box-shadow: 0 2px 12px #ffd6f7; margin-bottom: 12px; position: relative; }
   </style>
 </head>
 <body>
   <header class="download-header">
-
     <h1 class="photobooth-title">FinnBooth</h1>
-    </div>
   </header>
   <div id="downloadStatus" class="download-status"></div>
   <button id="continueBtn" class="continue-btn" style="display:none">
@@ -63,7 +114,8 @@
       <div id="previewArea" class="preview-area">
         <!-- Ảnh ghép sẽ hiển thị ở đây -->
       </div>
-      <button id="downloadBtn" class="photobooth-btn">Tải ảnh về</button>
+      <!-- Xóa nút cũ và thêm nút mới -->
+      <button id="downloadNewBtn" class="photobooth-btn">Tải xuống</button>
       <button id="clearBtn" class="download-clear-btn">Xóa tất cả ảnh</button>
     </section>
     <section class="download-frames photobooth-center">
@@ -82,6 +134,205 @@
       </div>
     </section>
   </main>
-  <script src="download.js"></script>
+  <script>
+// ...JS bắt đầu...
+window.addEventListener('DOMContentLoaded', () => {
+  const statusDiv = document.getElementById('downloadStatus');
+  const continueBtn = document.getElementById('continueBtn');
+  const mainArea = document.getElementById('mainDownloadArea');
+  const data = localStorage.getItem('photobooth_images');
+  let images = [];
+  if (data) {
+    images = JSON.parse(data);
+  }
+  const minImages = 2;
+  if (!images || images.length < minImages) {
+    mainArea.style.display = 'none';
+    statusDiv.innerHTML = `Bạn đã chụp <b>${images.length || 0}</b> ảnh. Hãy chụp đủ ${minImages} ảnh để tiếp tục!`;
+    continueBtn.style.display = 'block';
+    continueBtn.onclick = () => {
+      window.location.href = 'index.html';
+    };
+    return;
+  } else {
+    mainArea.style.display = '';
+    statusDiv.innerHTML = `Bạn đã chụp <b>${images.length}</b> ảnh. Hãy chọn khung và tải về nhé!`;
+    continueBtn.style.display = 'none';
+  }
+  const frameThumbs = document.querySelectorAll('.frame-thumb');
+  let selectedFrame = null;
+  frameThumbs.forEach(frame => {
+    frame.addEventListener('click', () => {
+      selectedFrame = frame.getAttribute('src');
+      frameThumbs.forEach(f => f.classList.remove('selected'));
+      frame.classList.add('selected');
+      updatePreview();
+    });
+  });
+  const stickerThumbs = document.querySelectorAll('.sticker-thumb');
+  let stickers = [];
+  stickerThumbs.forEach(sticker => {
+    sticker.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('stickerSrc', sticker.getAttribute('src'));
+    });
+  });
+  const previewArea = document.getElementById('previewArea');
+  previewArea.addEventListener('dragover', e => e.preventDefault());
+  previewArea.addEventListener('drop', e => {
+    e.preventDefault();
+    const src = e.dataTransfer.getData('stickerSrc');
+    if (src) {
+      const img = document.createElement('img');
+      img.src = src;
+      img.className = 'draggable-sticker';
+      img.style.position = 'absolute';
+      const rect = previewArea.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      let y = e.clientY - rect.top;
+      x = Math.max(0, Math.min(x, previewArea.offsetWidth - 48));
+      y = Math.max(0, Math.min(y, previewArea.offsetHeight - 48));
+      img.style.left = x + 'px';
+      img.style.top = y + 'px';
+      makeStickerDraggable(img, previewArea);
+      previewArea.appendChild(img);
+      stickers.push(img);
+    }
+  });
+  function makeStickerDraggable(sticker, container) {
+    let offsetX, offsetY, isDragging = false;
+    sticker.addEventListener('mousedown', e => {
+      isDragging = true;
+      offsetX = e.offsetX;
+      offsetY = e.offsetY;
+      sticker.style.zIndex = 10;
+    });
+    document.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      const rect = container.getBoundingClientRect();
+      let x = e.clientX - rect.left - offsetX;
+      let y = e.clientY - rect.top - offsetY;
+      x = Math.max(0, Math.min(x, container.offsetWidth - sticker.offsetWidth));
+      y = Math.max(0, Math.min(y, container.offsetHeight - sticker.offsetHeight));
+      sticker.style.left = x + 'px';
+      sticker.style.top = y + 'px';
+    });
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+      sticker.style.zIndex = 1;
+    });
+  }
+  const defaultFrame = 'frame1.png';
+  const photoSlots = [
+    { x: 44, y: 44, w: 593, h: 384 },
+    { x: 44, y: 472, w: 593, h: 384 },
+    { x: 44, y: 900, w: 593, h: 384 },
+    { x: 44, y: 1328, w: 593, h: 384 }
+  ];
+  const previewWidth = 340;
+  const previewHeight = 1024;
+  const scale = previewWidth / 681;
+  const previewSlots = photoSlots.map(slot => ({
+    x: Math.round(slot.x * scale),
+    y: Math.round(slot.y * scale),
+    w: Math.round(slot.w * scale),
+    h: Math.round(slot.h * scale)
+  }));
+  function updatePreview() {
+    previewArea.innerHTML = '';
+    const canvas = document.createElement('canvas');
+    canvas.width = previewWidth;
+    canvas.height = previewHeight;
+    const ctx = canvas.getContext('2d');
+    const frameImg = new Image();
+    frameImg.src = defaultFrame;
+    frameImg.onload = () => {
+      ctx.drawImage(frameImg, 0, 0, previewWidth, previewHeight);
+      let loaded = 0;
+      const imgObjs = images.map(src => {
+        const img = new Image();
+        img.src = src;
+        return img;
+      });
+      imgObjs.forEach((img, i) => {
+        img.onload = () => {
+          loaded++;
+          if (loaded === imgObjs.length) {
+            imgObjs.forEach((img, idx) => {
+              if (previewSlots[idx]) {
+                ctx.drawImage(img, previewSlots[idx].x, previewSlots[idx].y, previewSlots[idx].w, previewSlots[idx].h);
+              }
+            });
+            previewArea.appendChild(canvas);
+          }
+        };
+      });
+    };
+    frameImg.onerror = () => {
+      alert('Không thể tải file khung (frame1.png). Hãy kiểm tra lại file này!');
+    };
+    if (!images || images.length < 4) {
+      alert('Bạn cần chụp đủ 4 ảnh để tải về!');
+      return;
+    }
+  }
+  updatePreview();
+  // Xóa sự kiện nút cũ nếu có
+  const oldBtn = document.getElementById('downloadBtn');
+  if (oldBtn) oldBtn.remove();
+  // Thêm sự kiện cho nút mới
+  document.getElementById('downloadNewBtn').addEventListener('click', function () {
+    if (!images || images.length < 4) {
+      alert('Bạn cần chụp đủ 4 ảnh để tải về!');
+      return;
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = 681;
+    canvas.height = 2048;
+    const ctx = canvas.getContext('2d');
+    const frameImg = new Image();
+    frameImg.src = defaultFrame;
+    frameImg.onload = function () {
+      ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+      let loaded = 0;
+      const imgObjs = images.map(src => {
+        const img = new Image();
+        img.src = src;
+        return img;
+      });
+      imgObjs.forEach((img, i) => {
+        img.onload = function () {
+          loaded++;
+          if (loaded === imgObjs.length) {
+            imgObjs.forEach((img, idx) => {
+              if (photoSlots[idx]) {
+                ctx.drawImage(img, photoSlots[idx].x, photoSlots[idx].y, photoSlots[idx].w, photoSlots[idx].h);
+              }
+            });
+            stickers.forEach(sticker => {
+              const x = parseInt(sticker.style.left) || 0;
+              const y = parseInt(sticker.style.top) || 0;
+              ctx.drawImage(sticker, x, y, 48, 48);
+            });
+            const a = document.createElement('a');
+            a.href = canvas.toDataURL('image/png');
+            a.download = `photobooth_all.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+        };
+      });
+    };
+    frameImg.onerror = function () {
+      alert('Không thể tải file khung (frame1.png). Hãy kiểm tra lại file này!');
+    };
+  });
+  document.getElementById('clearBtn').onclick = () => {
+    localStorage.removeItem('photobooth_images');
+    location.reload();
+  };
+});
+// ...JS kết thúc...
+  </script>
 </body>
 </html>
