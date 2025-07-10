@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tải ảnh Photobooth</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="download.css">
   <style>
     /* Tạm thời giữ lại style cũ cho nút xóa */
     .download-clear-btn { background: #ff6f91; color: #fff; border: none; border-radius: 12px; padding: 10px 24px; font-size: 16px; margin: 24px auto 0 auto; display: block; cursor: pointer; }
@@ -48,21 +48,14 @@
 </head>
 <body>
   <header class="download-header">
-    <img src="logo.png" alt="Logo" class="download-logo" />
-    <h1 class="photobooth-title">PhotoXinhh</h1>
-    <div class="download-frame-select">
-      <label for="frameSelect">Chọn khung:</label>
-      <select id="frameSelect">
-        <option value="none">Không khung</option>
-        <option value="frame1">Khung Pastel 1</option>
-        <option value="frame2">Khung Pastel 2</option>
-      </select>
+
+    <h1 class="photobooth-title">FinnBooth</h1>
     </div>
   </header>
   <div id="downloadStatus" class="download-status"></div>
   <button id="continueBtn" class="continue-btn" style="display:none">
-    Tiếp tục
-    <span>(Chọn Khung Ảnh)</span>
+    Quay Lại
+    <span>(Alo alo, về vị trí nào các vị ơi!)</span>
   </button>
   <main class="download-main photobooth-wrapper" id="mainDownloadArea">
     <section class="download-preview photobooth-left">
