@@ -71,14 +71,51 @@ function captureFromWebcam() {
 // Áp filter màu
 function applyFilterToCanvas(ctx, w, h) {
   switch(selectedFilter) {
-    case 'dreamy': ctx.globalAlpha = 0.7; ctx.fillStyle = '#ffe0f7'; ctx.fillRect(0,0,w,h); ctx.globalAlpha = 1; break;
-    case 'fresh': ctx.globalAlpha = 0.3; ctx.fillStyle = '#b2f7ef'; ctx.fillRect(0,0,w,h); ctx.globalAlpha = 1; break;
-    case 'warm': ctx.globalAlpha = 0.2; ctx.fillStyle = '#ffe4b5'; ctx.fillRect(0,0,w,h); ctx.globalAlpha = 1; break;
-    case 'film': ctx.globalAlpha = 0.2; ctx.fillStyle = '#e0e0e0'; ctx.fillRect(0,0,w,h); ctx.globalAlpha = 1; break;
-    case 'natural': ctx.globalAlpha = 0.1; ctx.fillStyle = '#eaffd0'; ctx.fillRect(0,0,w,h); ctx.globalAlpha = 1; break;
-    case 'vintage': ctx.globalAlpha = 0.2; ctx.fillStyle = '#f5e6c8'; ctx.fillRect(0,0,w,h); ctx.globalAlpha = 1; break;
-    case 'bw': ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'saturation'; ctx.filter = 'grayscale(1)'; break;
-    default: break;
+    case 'dreamy':
+      ctx.globalAlpha = 0.35;
+      ctx.fillStyle = '#b2f7ef';
+      ctx.fillRect(0,0,w,h);
+      ctx.globalAlpha = 1;
+      break;
+    case 'fresh':
+      ctx.globalAlpha = 0.25;
+      ctx.fillStyle = '#7ed6df';
+      ctx.fillRect(0,0,w,h);
+      ctx.globalAlpha = 1;
+      break;
+    case 'warm':
+      ctx.globalAlpha = 0.18;
+      ctx.fillStyle = '#ffe4b5';
+      ctx.fillRect(0,0,w,h);
+      ctx.globalAlpha = 1;
+      break;
+    case 'film':
+      ctx.globalAlpha = 0.18;
+      ctx.fillStyle = '#e0e0e0';
+      ctx.fillRect(0,0,w,h);
+      ctx.globalAlpha = 1;
+      break;
+    case 'natural':
+      ctx.globalAlpha = 0.12;
+      ctx.fillStyle = '#eaffd0';
+      ctx.fillRect(0,0,w,h);
+      ctx.globalAlpha = 1;
+      break;
+    case 'vintage':
+      ctx.globalAlpha = 0.18;
+      ctx.fillStyle = '#f5e6c8';
+      ctx.fillRect(0,0,w,h);
+      ctx.globalAlpha = 1;
+      break;
+    case 'bw':
+      ctx.globalAlpha = 1;
+      ctx.filter = 'grayscale(1)';
+      ctx.drawImage(ctx.canvas, 0, 0, w, h);
+      ctx.filter = 'none';
+      break;
+    default:
+      // Không filter
+      break;
   }
 }
 
@@ -121,6 +158,7 @@ manualBtn.onclick = () => {
     capturedImages.push(img);
     renderCapturedList();
     updateStatus();
+    checkShowFramePopup();
   }
 };
 
@@ -147,6 +185,7 @@ autoBtn.onclick = async () => {
       capturedImages.push(img);
       renderCapturedList();
       updateStatus();
+      checkShowFramePopup();
     }
     await new Promise(r => setTimeout(r, 400)); // nghỉ 1 chút giữa các lần chụp
   }
@@ -173,15 +212,57 @@ fileInput.onchange = e => {
   fileInput.value = '';
 };
 
-// Chọn filter
+// Hiển thị filter trực tiếp trên camera
+let filterOverlay = document.getElementById('filterOverlay');
+if (!filterOverlay) {
+  filterOverlay = document.createElement('div');
+  filterOverlay.id = 'filterOverlay';
+  filterOverlay.style.position = 'absolute';
+  filterOverlay.style.top = 0;
+  filterOverlay.style.left = 0;
+  filterOverlay.style.width = '100%';
+  filterOverlay.style.height = '100%';
+  filterOverlay.style.pointerEvents = 'none';
+  filterOverlay.style.zIndex = 2;
+  document.querySelector('.photobooth-preview').appendChild(filterOverlay);
+}
+
+function updateFilterOverlay() {
+  let style = '';
+  switch(selectedFilter) {
+    case 'dreamy':
+      style = 'background:rgba(178,247,239,0.35);'; break;
+    case 'fresh':
+      style = 'background:rgba(126,214,223,0.25);'; break;
+    case 'warm':
+      style = 'background:rgba(255,228,181,0.18);'; break;
+    case 'film':
+      style = 'background:rgba(224,224,224,0.18);'; break;
+    case 'natural':
+      style = 'background:rgba(234,255,208,0.12);'; break;
+    case 'vintage':
+      style = 'background:rgba(245,230,200,0.18);'; break;
+    case 'bw':
+      style = 'backdrop-filter: grayscale(1); filter: grayscale(1);'; break;
+    default:
+      style = 'background:transparent; filter:none; backdrop-filter:none;';
+  }
+  filterOverlay.style = filterOverlay.style.cssText.split(';').slice(0,7).join(';')+';'+style;
+}
+
+// Cập nhật filter overlay khi chọn filter
 filters.onclick = e => {
   if (e.target.closest('.filter-btn')) {
     filters.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('selected'));
     const btn = e.target.closest('.filter-btn');
     btn.classList.add('selected');
     selectedFilter = btn.dataset.filter;
+    updateFilterOverlay();
   }
 };
+
+// Cập nhật filter overlay khi load trang
+updateFilterOverlay();
 
 // --- Trang trí khung ảnh sau khi chụp đủ 4 ảnh ---
 continueBtn.onclick = () => {
@@ -269,6 +350,75 @@ photoCount.onchange = () => {
 // Hiệu ứng cho uploadBtn
 uploadBtn.onmousedown = () => uploadBtn.style.transform = 'scale(0.96)';
 uploadBtn.onmouseup = uploadBtn.onmouseleave = () => uploadBtn.style.transform = 'scale(1)';
+
+// Khi chụp đủ ảnh, hiện popup chọn khung, sticker
+function showFramePopup() {
+  const popup = document.createElement('div');
+  popup.className = 'frame-popup';
+  popup.innerHTML = `
+    <div class="frame-popup-content">
+      <button class="close-frame-popup">×</button>
+      <h2>Chọn Khung & Sticker</h2>
+      <div class="frame-list" id="frameList"></div>
+      <div class="sticker-list" id="stickerList"></div>
+      <button class="download-btn" id="popupDownloadBtn">Tải ảnh về để in</button>
+    </div>
+  `;
+  document.body.appendChild(popup);
+  document.body.style.overflow = 'hidden';
+  // Đóng popup
+  popup.querySelector('.close-frame-popup').onclick = () => {
+    popup.remove();
+    document.body.style.overflow = '';
+  };
+  // Render khung mẫu
+  const frames = [
+    {name:'Không khung', src:null},
+    {name:'Khung Xanh', src:'frame1.png'},
+    {name:'Khung Hồng', src:'frame2.png'}
+  ];
+  const frameList = popup.querySelector('#frameList');
+  frames.forEach((f,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'frame-thumb';
+    btn.innerHTML = f.src ? `<img src="${f.src}" alt="${f.name}">` : f.name;
+    btn.onclick = () => {
+      frameList.querySelectorAll('.selected').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      popup.selectedFrame = f.src;
+    };
+    if(i===0) btn.classList.add('selected');
+    frameList.appendChild(btn);
+  });
+  popup.selectedFrame = null;
+  // Render sticker mẫu
+  const stickers = ['❤️','⭐','🎉','😆','🌸'];
+  const stickerList = popup.querySelector('#stickerList');
+  stickers.forEach((s,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'sticker-thumb';
+    btn.textContent = s;
+    btn.onclick = () => {
+      btn.classList.toggle('selected');
+    };
+    stickerList.appendChild(btn);
+  });
+  // Tải ảnh về
+  popup.querySelector('#popupDownloadBtn').onclick = () => {
+    // Ghép ảnh với khung và sticker (demo: chỉ tải ảnh gốc)
+    const link = document.createElement('a');
+    link.href = finalCanvas.toDataURL('image/png');
+    link.download = 'photobooth.png';
+    link.click();
+  };
+}
+
+// Khi chụp đủ ảnh, show popup chọn khung
+function checkShowFramePopup() {
+  if (capturedImages.length === maxPhotos) {
+    setTimeout(showFramePopup, 500);
+  }
+}
 
 // Khởi tạo
 renderCapturedList();
