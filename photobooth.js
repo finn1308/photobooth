@@ -59,12 +59,28 @@ startCamera();
 // Chụp ảnh từ webcam
 function captureFromWebcam() {
   if (!video.srcObject) return;
+  // Lấy frame gốc từ webcam
+  const rawW = video.videoWidth;
+  const rawH = video.videoHeight;
+  const targetW = 770, targetH = 565, targetRatio = targetW / targetH;
+  let sx = 0, sy = 0, sw = rawW, sh = rawH;
+  const rawRatio = rawW / rawH;
+  if (rawRatio > targetRatio) {
+    // Webcam rộng hơn, crop 2 bên
+    sw = rawH * targetRatio;
+    sx = (rawW - sw) / 2;
+  } else if (rawRatio < targetRatio) {
+    // Webcam cao hơn, crop trên dưới
+    sh = rawW / targetRatio;
+    sy = (rawH - sh) / 2;
+  }
+  // Tạo canvas đúng tỷ lệ 770x565
   const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
+  canvas.width = targetW;
+  canvas.height = targetH;
   const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  applyFilterToCanvas(ctx, canvas.width, canvas.height);
+  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, targetW, targetH);
+  applyFilterToCanvas(ctx, targetW, targetH);
   return canvas.toDataURL('image/png');
 }
 

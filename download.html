@@ -237,6 +237,24 @@ window.addEventListener('DOMContentLoaded', () => {
     w: Math.round(slot.w * scale),
     h: Math.round(slot.h * scale)
   }));
+  function cropAndDrawImage(ctx, img, slot) {
+    // Crop ảnh gốc (770x565) vào slot đúng tỉ lệ, luôn căn giữa
+    const imgW = img.width;
+    const imgH = img.height;
+    const slotRatio = slot.w / slot.h;
+    const imgRatio = imgW / imgH;
+    let sx = 0, sy = 0, sw = imgW, sh = imgH;
+    if (imgRatio > slotRatio) {
+      // Ảnh rộng hơn slot, crop 2 bên
+      sw = imgH * slotRatio;
+      sx = Math.round((imgW - sw) / 2);
+    } else {
+      // Ảnh cao hơn slot, crop trên dưới
+      sh = imgW / slotRatio;
+      sy = Math.round((imgH - sh) / 2);
+    }
+    ctx.drawImage(img, sx, sy, sw, sh, slot.x, slot.y, slot.w, slot.h);
+  }
   function updatePreview() {
     previewArea.innerHTML = '';
     const canvas = document.createElement('canvas');
@@ -259,7 +277,7 @@ window.addEventListener('DOMContentLoaded', () => {
           if (loaded === imgObjs.length) {
             imgObjs.forEach((img, idx) => {
               if (previewSlots[idx]) {
-                ctx.drawImage(img, previewSlots[idx].x, previewSlots[idx].y, previewSlots[idx].w, previewSlots[idx].h);
+                cropAndDrawImage(ctx, img, previewSlots[idx]);
               }
             });
             previewArea.appendChild(canvas);
@@ -270,8 +288,8 @@ window.addEventListener('DOMContentLoaded', () => {
     frameImg.onerror = () => {
       alert('Không thể tải file khung (frame1.png). Hãy kiểm tra lại file này!');
     };
-    if (!images || images.length < 4) {
-      alert('Bạn cần chụp đủ 4 ảnh để tải về!');
+    if (!images || images.length < 2) {
+      alert('Bạn cần chụp đủ 2 ảnh để tải về!');
       return;
     }
   }
@@ -281,8 +299,8 @@ window.addEventListener('DOMContentLoaded', () => {
   if (oldBtn) oldBtn.remove();
   // Thêm sự kiện cho nút mới
   document.getElementById('downloadNewBtn').addEventListener('click', function () {
-    if (!images || images.length < 4) {
-      alert('Bạn cần chụp đủ 4 ảnh để tải về!');
+    if (!images || images.length < 1) {
+      alert('Bạn cần chụp ít nhất 1 ảnh để tải về!');
       return;
     }
     const canvas = document.createElement('canvas');
@@ -303,11 +321,46 @@ window.addEventListener('DOMContentLoaded', () => {
         img.onload = function () {
           loaded++;
           if (loaded === imgObjs.length) {
-            imgObjs.forEach((img, idx) => {
+            for (let idx = 0; idx < imgObjs.length; idx++) {
               if (photoSlots[idx]) {
-                ctx.drawImage(img, photoSlots[idx].x, photoSlots[idx].y, photoSlots[idx].w, photoSlots[idx].h);
+                const slot = photoSlots[idx];
+                const img = imgObjs[idx];
+                // --- CROP ẢNH VỀ ĐÚNG TỶ LỆ 770x565 (1.36:1) ---
+                const targetW = 770, targetH = 565, targetRatio = targetW / targetH;
+                let sx = 0, sy = 0, sw = img.width, sh = img.height;
+                const imgRatio = img.width / img.height;
+                if (imgRatio > targetRatio) {
+                  // Ảnh rộng hơn, crop 2 bên
+                  sw = img.height * targetRatio;
+                  sx = (img.width - sw) / 2;
+                } else if (imgRatio < targetRatio) {
+                  // Ảnh cao hơn, crop trên dưới
+                  sh = img.width / targetRatio;
+                  sy = (img.height - sh) / 2;
+                }
+                // Tạo canvas phụ crop đúng tỷ lệ
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = targetW;
+                tempCanvas.height = targetH;
+                const tctx = tempCanvas.getContext('2d');
+                tctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
+                // Tính toán scale để fit vào slot, căn giữa (có thể có viền trắng)
+                const slotRatio = slot.w / slot.h;
+                let drawW = slot.w, drawH = slot.h, dx = slot.x, dy = slot.y;
+                if (slotRatio > targetRatio) {
+                  // Slot rộng hơn, fit theo chiều cao, căn giữa ngang
+                  drawH = slot.h;
+                  drawW = slot.h * targetRatio;
+                  dx = slot.x + (slot.w - drawW) / 2;
+                } else if (slotRatio < targetRatio) {
+                  // Slot cao hơn, fit theo chiều rộng, căn giữa dọc
+                  drawW = slot.w;
+                  drawH = slot.w / targetRatio;
+                  dy = slot.y + (slot.h - drawH) / 2;
+                }
+                ctx.drawImage(tempCanvas, 0, 0, targetW, targetH, dx, dy, drawW, drawH);
               }
-            });
+            }
             stickers.forEach(sticker => {
               const x = parseInt(sticker.style.left) || 0;
               const y = parseInt(sticker.style.top) || 0;
