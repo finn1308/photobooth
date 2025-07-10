@@ -1,31 +1,49 @@
 // download.js - Trang tải ảnh từ localStorage
 
 window.addEventListener('DOMContentLoaded', () => {
-  const container = document.getElementById('downloadContainer');
+  const statusDiv = document.getElementById('downloadStatus');
+  const continueBtn = document.getElementById('continueBtn');
+  const mainArea = document.getElementById('mainDownloadArea');
   const data = localStorage.getItem('photobooth_images');
-  if (!data) {
-    container.innerHTML = '<p>Không tìm thấy ảnh nào. Hãy chụp ảnh ở trang chính trước!</p>';
-    return;
+  let images = [];
+  if (data) {
+    images = JSON.parse(data);
   }
-  const images = JSON.parse(data);
-  if (!Array.isArray(images) || images.length === 0) {
-    container.innerHTML = '<p>Không tìm thấy ảnh nào. Hãy chụp ảnh ở trang chính trước!</p>';
+  // Số ảnh tối thiểu để cho phép chọn khung (có thể chỉnh 2, 3, 4 tuỳ nhu cầu)
+  const minImages = 2;
+  if (!images || images.length < minImages) {
+    mainArea.style.display = 'none';
+    statusDiv.innerHTML = `Bạn đã chụp <b>${images.length || 0}</b> ảnh. Hãy chụp đủ ${minImages} ảnh để tiếp tục!`;
+    continueBtn.style.display = 'block';
+    continueBtn.onclick = () => {
+      window.location.href = 'index.html';
+    };
     return;
+  } else {
+    mainArea.style.display = '';
+    statusDiv.innerHTML = `Bạn đã chụp <b>${images.length}</b> ảnh. Hãy chọn khung và tải về nhé!`;
+    continueBtn.style.display = 'none';
   }
-  container.innerHTML = '<h2>Ảnh của bạn</h2>';
+  const previewArea = document.getElementById('previewArea');
+  previewArea.innerHTML = '';
   images.forEach((src, i) => {
-    const div = document.createElement('div');
-    div.className = 'download-img-item';
-    div.innerHTML = `<img src="${src}" alt="Ảnh ${i+1}"><a href="${src}" download="photo${i+1}.png">Tải ảnh ${i+1}</a>`;
-    container.appendChild(div);
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = `Ảnh ${i+1}`;
+    img.style.display = 'block';
+    img.style.margin = '10px auto';
+    img.style.maxWidth = '90%';
+    img.style.borderRadius = '16px';
+    img.style.boxShadow = '0 2px 12px #ffd6f7';
+    previewArea.appendChild(img);
   });
-  // Nút xóa ảnh khỏi localStorage
-  const clearBtn = document.createElement('button');
-  clearBtn.textContent = 'Xóa toàn bộ ảnh';
-  clearBtn.onclick = () => {
+  // Nút tải về và xóa ảnh
+  document.getElementById('downloadBtn').onclick = () => {
+    // TODO: ghép khung, sticker rồi tải về
+    alert('Chức năng tải về sẽ được cập nhật!');
+  };
+  document.getElementById('clearBtn').onclick = () => {
     localStorage.removeItem('photobooth_images');
     location.reload();
   };
-  clearBtn.className = 'download-clear-btn';
-  container.appendChild(clearBtn);
 });

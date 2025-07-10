@@ -9,6 +9,41 @@
     /* Tạm thời giữ lại style cũ cho nút xóa */
     .download-clear-btn { background: #ff6f91; color: #fff; border: none; border-radius: 12px; padding: 10px 24px; font-size: 16px; margin: 24px auto 0 auto; display: block; cursor: pointer; }
     .download-clear-btn:hover { background: #ff4778; }
+    .continue-btn {
+      background: linear-gradient(135deg, #ffe0f0 0%, #ffd6f7 100%);
+      color: #ff6f91;
+      border: none;
+      border-radius: 18px;
+      padding: 18px 36px 10px 36px;
+      font-size: 22px;
+      font-family: 'Pacifico', cursive;
+      font-weight: bold;
+      margin: 32px auto 0 auto;
+      display: block;
+      box-shadow: 0 2px 16px #ffd6f7;
+      text-align: center;
+      transition: background 0.2s;
+    }
+    .continue-btn span {
+      display: block;
+      font-size: 15px;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-weight: normal;
+      margin-top: 2px;
+      color: #ff6f91;
+      opacity: 0.8;
+    }
+    .continue-btn:hover {
+      background: #ffeaf7;
+    }
+    .download-status {
+      text-align: center;
+      color: #ff6f91;
+      font-size: 18px;
+      margin-top: 18px;
+      margin-bottom: 0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
   </style>
 </head>
 <body>
@@ -24,7 +59,12 @@
       </select>
     </div>
   </header>
-  <main class="download-main photobooth-wrapper">
+  <div id="downloadStatus" class="download-status"></div>
+  <button id="continueBtn" class="continue-btn" style="display:none">
+    Tiếp tục
+    <span>(Chọn Khung Ảnh)</span>
+  </button>
+  <main class="download-main photobooth-wrapper" id="mainDownloadArea">
     <section class="download-preview photobooth-left">
       <h2 class="photobooth-sub">Preview</h2>
       <div id="previewArea" class="preview-area">

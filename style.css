@@ -411,9 +411,74 @@ body {
   box-shadow: 0 2px 8px #b2f7ef;
 }
 #popupDownloadBtn.download-btn:hover { background: #0097a7; }
-@media (max-width: 600px) {
-  .frame-popup-content { min-width: 0; padding: 12px 2vw 12px 2vw; }
-  .frame-list, .sticker-list { gap: 8px; }
-  .frame-thumb img { width: 40px; height: 40px; }
-  .sticker-thumb { width: 32px; height: 32px; font-size: 18px; }
+/* Preview dọc các ảnh đã chụp bên trái */
+.preview-vertical {
+  width: 220px;
+  min-height: 420px;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 4px 24px #b2f7ef;
+  border: 3px solid #ffb6d5;
+  padding: 18px 8px 18px 8px;
+  margin: 0 auto 18px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.preview-vertical img {
+  width: 180px;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px #e6faff;
+  border: 2px solid #7ed6df;
+  background: #f0fdff;
+}
+.continue-btn {
+  width: 180px;
+  background: linear-gradient(180deg, #ffe6f7 0%, #ffe6fa 100%);
+  color: #ff6f91;
+  font-size: 22px;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-weight: bold;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px #ffb6d5;
+  padding: 16px 0 8px 0;
+  margin: 18px auto 0 auto;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  text-align: center;
+  display: block;
+}
+.continue-btn:hover {
+  background: #ffd6ef;
+  box-shadow: 0 4px 24px #ffb6d5;
+}
+.continue-sub {
+  font-size: 15px;
+  color: #ffb6d5;
+  font-weight: normal;
+}
+.preview-note {
+  color: #b2b2b2;
+  font-size: 13px;
+  margin-top: 8px;
+  text-align: center;
+  font-weight: normal;
+}
+
+/* Responsive cho preview dọc */
+@media (max-width: 900px) {
+  .photobooth-wrapper {
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+  }
+  .preview-vertical {
+    width: 90vw;
+    min-width: 0;
+    max-width: 320px;
+  }
 }
