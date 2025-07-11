@@ -96,20 +96,21 @@
     .sticker-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
     .sticker-thumb { width: 48px; height: 48px; object-fit: contain; border-radius: 8px; border: 2px solid #ffd6f7; cursor: grab; background: #fff; }
     .sticker-thumb:hover { border: 2px solid #7ed6df; }
-    .preview-area {
-  width: 770px;
-  height: 565px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  background: #fffafd;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px #ffd6f7;
-  margin-bottom: 12px;
-  position: relative;
-}
-
+    .preview-area { min-height: 1040px; min-width: 360px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; background: #fffafd; border-radius: 12px; box-shadow: 0 2px 12px #ffd6f7; margin-bottom: 12px; position: relative; }
+    .sticker-wrapper { position: absolute; }
+    .sticker-btn {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: none;
+      background: #fff6fa;
+      color: #7ed6df;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px #ffd6f7;
+      cursor: pointer;
+      z-index: 20;
+    }
+    .sticker-btn:hover { background: #ffe0f0; color: #ff4778; }
   </style>
 </head>
 <body>
@@ -136,6 +137,14 @@
       <div class="frame-list">
         <img src="frame1.png" alt="Khung 1" class="frame-thumb" data-frame="frame1" />
         <img src="frame2.png" alt="Khung 2" class="frame-thumb" data-frame="frame2" />
+        <img src="frame3.png" alt="Khung 3" class="frame-thumb" data-frame="frame3" />
+        <img src="frame4.png" alt="Khung 4" class="frame-thumb" data-frame="frame4" />
+        <img src="frame5.png" alt="Khung 5" class="frame-thumb" data-frame="frame5" />
+        <img src="frame6.png" alt="Khung 6" class="frame-thumb" data-frame="frame6" />
+        <img src="frame7.png" alt="Khung 7" class="frame-thumb" data-frame="frame7" />
+        <img src="frame8.png" alt="Khung 8" class="frame-thumb" data-frame="frame8" />
+        <img src="frame9.png" alt="Khung 9" class="frame-thumb" data-frame="frame9" />
+        <img src="frame10.png" alt="Khung 10" class="frame-thumb" data-frame="frame10" />
       </div>
     </section>
     <section class="download-stickers photobooth-right">
@@ -143,7 +152,14 @@
       <div class="sticker-list">
         <img src="sticker1.png" alt="Sticker 1" class="sticker-thumb" draggable="true" />
         <img src="sticker2.png" alt="Sticker 2" class="sticker-thumb" draggable="true" />
-        <!-- Thêm sticker khác nếu muốn -->
+        <img src="sticker3.png" alt="Sticker 3" class="sticker-thumb" draggable="true" />
+        <img src="sticker4.png" alt="Sticker 4" class="sticker-thumb" draggable="true" />
+        <img src="sticker5.png" alt="Sticker 5" class="sticker-thumb" draggable="true" />
+        <img src="sticker6.png" alt="Sticker 6" class="sticker-thumb" draggable="true" />
+        <img src="sticker7.png" alt="Sticker 7" class="sticker-thumb" draggable="true" />
+        <img src="sticker8.png" alt="Sticker 8" class="sticker-thumb" draggable="true" />
+        <img src="sticker9.png" alt="Sticker 9" class="sticker-thumb" draggable="true" />
+        <img src="sticker10.png" alt="Sticker 10" class="sticker-thumb" draggable="true" />
       </div>
     </section>
   </main>
@@ -172,14 +188,15 @@ window.addEventListener('DOMContentLoaded', () => {
     statusDiv.innerHTML = `Bạn đã chụp <b>${images.length}</b> ảnh. Hãy chọn khung và tải về nhé!`;
     continueBtn.style.display = 'none';
   }
+  // JS: chọn khung
+  let selectedFrame = 'frame1.png';
   const frameThumbs = document.querySelectorAll('.frame-thumb');
-  let selectedFrame = null;
   frameThumbs.forEach(frame => {
     frame.addEventListener('click', () => {
       selectedFrame = frame.getAttribute('src');
       frameThumbs.forEach(f => f.classList.remove('selected'));
       frame.classList.add('selected');
-      updatePreview();
+      updatePreview(); // Cập nhật preview ngay khi chọn khung
     });
   });
   const stickerThumbs = document.querySelectorAll('.sticker-thumb');
@@ -195,25 +212,69 @@ window.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const src = e.dataTransfer.getData('stickerSrc');
     if (src) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'sticker-wrapper';
+      wrapper.style.position = 'absolute';
+      wrapper.style.width = '48px';
+      wrapper.style.height = '48px';
       const img = document.createElement('img');
       img.src = src;
       img.className = 'draggable-sticker';
-      img.style.position = 'absolute';
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.pointerEvents = 'none';
+      // Tạo nút phóng to/thu nhỏ
+      const btnPlus = document.createElement('button');
+      btnPlus.textContent = '+';
+      btnPlus.className = 'sticker-btn sticker-plus';
+      btnPlus.style.position = 'absolute';
+      btnPlus.style.right = '-18px';
+      btnPlus.style.top = '-18px';
+      const btnMinus = document.createElement('button');
+      btnMinus.textContent = '−';
+      btnMinus.className = 'sticker-btn sticker-minus';
+      btnMinus.style.position = 'absolute';
+      btnMinus.style.left = '-18px';
+      btnMinus.style.top = '-18px';
+      // Xử lý phóng to/thu nhỏ
+      btnPlus.onclick = e => {
+        e.stopPropagation();
+        let w = parseInt(wrapper.style.width);
+        let h = parseInt(wrapper.style.height);
+        w = Math.min(w + 16, 160);
+        h = Math.min(h + 16, 160);
+        wrapper.style.width = w + 'px';
+        wrapper.style.height = h + 'px';
+      };
+      btnMinus.onclick = e => {
+        e.stopPropagation();
+        let w = parseInt(wrapper.style.width);
+        let h = parseInt(wrapper.style.height);
+        w = Math.max(w - 16, 24);
+        h = Math.max(h - 16, 24);
+        wrapper.style.width = w + 'px';
+        wrapper.style.height = h + 'px';
+      };
+      wrapper.appendChild(img);
+      wrapper.appendChild(btnPlus);
+      wrapper.appendChild(btnMinus);
+      // Vị trí ban đầu
       const rect = previewArea.getBoundingClientRect();
       let x = e.clientX - rect.left;
       let y = e.clientY - rect.top;
       x = Math.max(0, Math.min(x, previewArea.offsetWidth - 48));
       y = Math.max(0, Math.min(y, previewArea.offsetHeight - 48));
-      img.style.left = x + 'px';
-      img.style.top = y + 'px';
-      makeStickerDraggable(img, previewArea);
-      previewArea.appendChild(img);
-      stickers.push(img);
+      wrapper.style.left = x + 'px';
+      wrapper.style.top = y + 'px';
+      makeStickerDraggable(wrapper, previewArea);
+      previewArea.appendChild(wrapper);
+      stickers.push(wrapper);
     }
   });
   function makeStickerDraggable(sticker, container) {
     let offsetX, offsetY, isDragging = false;
     sticker.addEventListener('mousedown', e => {
+      if (e.target.classList.contains('sticker-btn')) return;
       isDragging = true;
       offsetX = e.offsetX;
       offsetY = e.offsetY;
@@ -271,11 +332,11 @@ window.addEventListener('DOMContentLoaded', () => {
   function updatePreview() {
     previewArea.innerHTML = '';
     const canvas = document.createElement('canvas');
-    canvas.width = 770;
-    canvas.height = 565;
+    canvas.width = previewWidth;
+    canvas.height = previewHeight;
     const ctx = canvas.getContext('2d');
     const frameImg = new Image();
-    frameImg.src = defaultFrame;
+    frameImg.src = selectedFrame; // Luôn dùng khung đã chọn
     frameImg.onload = () => {
       ctx.drawImage(frameImg, 0, 0, previewWidth, previewHeight);
       let loaded = 0;
@@ -321,7 +382,7 @@ window.addEventListener('DOMContentLoaded', () => {
     canvas.height = 2048;
     const ctx = canvas.getContext('2d');
     const frameImg = new Image();
-    frameImg.src = defaultFrame;
+    frameImg.src = selectedFrame;
     frameImg.onload = function () {
       ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
       let loaded = 0;
@@ -338,8 +399,8 @@ window.addEventListener('DOMContentLoaded', () => {
               if (photoSlots[idx]) {
                 const slot = photoSlots[idx];
                 const img = imgObjs[idx];
-                // --- CROP ẢNH VỀ ĐÚNG TỶ LỆ 770x565 (1.36:1) ---
-                const targetW = 770, targetH = 565, targetRatio = targetW / targetH;
+                // --- CROP ẢNH VỀ ĐÚNG TỶ LỆ 770x656 (1.173:1) ---
+                const targetW = 770, targetH = 656, targetRatio = targetW / targetH;
                 let sx = 0, sy = 0, sw = img.width, sh = img.height;
                 const imgRatio = img.width / img.height;
                 if (imgRatio > targetRatio) {
