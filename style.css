@@ -273,20 +273,158 @@ body {
   .captured-item { width: 90px; height: 70px; border-radius: 12px; }
 }
 @media (max-width: 600px) {
-  .photobooth-left { max-width: 98vw; min-width: 0; }
-  .photobooth-controls { padding: 8px 2vw 12px 2vw; }
-  .photobooth-title { font-size: 32px; }
-  .photobooth-sub { font-size: 18px; }
-  .photobooth-preview { max-width: 98vw; border-radius: 10px; }
-  .photobooth-actions { gap: 8px; }
-  .round-btn, .round-btn.auto, .round-btn.disabled, .upload-btn-main { width: 48px; height: 48px; font-size: 13px; }
-  .filter-btn { width: 28px; height: 28px; }
-  .filter-label { font-size: 10px; }
-  .captured-item { width: 54px; height: 44px; border-radius: 8px; }
+  body {
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+    background: #e6faff;
+  }
+  .photobooth-wrapper {
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+    padding: 0;
+    min-height: 100vh;
+    max-width: 100vw;
+  }
+  .photobooth-left {
+    width: 100vw;
+    max-width: 100vw;
+    min-width: 0;
+    padding: 0 0 0 0;
+    align-items: center;
+  }
+  .photobooth-title {
+    font-size: 28px;
+    margin-top: 12px;
+    margin-bottom: 2px;
+    text-align: center;
+  }
+  .photobooth-sub {
+    font-size: 16px;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .photobooth-controls {
+    width: 98vw;
+    max-width: 98vw;
+    padding: 8px 2vw 12px 2vw;
+    border-radius: 18px;
+    box-shadow: 0 2px 8px #b2f7ef;
+  }
+  .photobooth-selects {
+    flex-direction: row;
+    gap: 8px;
+    margin-bottom: 8px;
+    justify-content: center;
+    align-items: center;
+  }
+  .photobooth-selects label {
+    font-size: 15px;
+  }
+  .photobooth-selects select {
+    font-size: 15px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    margin-right: 4px;
+  }
+  .photobooth-preview {
+    max-width: 98vw;
+    width: 98vw;
+    aspect-ratio: 770 / 565;
+    border-radius: 12px;
+    margin: 0 auto 8px auto;
+    box-shadow: 0 2px 8px #b2f7ef;
+  }
+  .photobooth-preview video {
+    border-radius: 12px;
+  }
+  #status {
+    font-size: 15px;
+    bottom: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    border-radius: 10px;
+  }
+  .photobooth-actions {
+    gap: 8px;
+    margin: 12px 0 8px 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .round-btn, .round-btn.auto, .round-btn.disabled, .upload-btn-main {
+    width: 56px;
+    height: 56px;
+    font-size: 15px;
+    border-radius: 50%;
+    margin: 0 2px;
+  }
+  .filters-title {
+    font-size: 15px;
+    margin-bottom: 4px;
+    margin-left: 0;
+    text-align: left;
+  }
+  .filters {
+    gap: 8px;
+    margin: 0 0 8px 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    width: 98vw;
+    max-width: 98vw;
+    padding-bottom: 4px;
+  }
+  .filter-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 11px;
+    border-radius: 50%;
+    margin-bottom: 2px;
+  }
+  .filter-label {
+    font-size: 9px;
+  }
+  .photobooth-right {
+    width: 100vw;
+    max-width: 100vw;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
+  }
+  .captured-list {
+    flex-direction: row;
+    gap: 8px;
+    justify-content: center;
+  }
+  .captured-item {
+    width: 54px;
+    height: 44px;
+    border-radius: 8px;
+  }
+  .download-btn {
+    font-size: 16px;
+    padding: 10px 18px;
+    border-radius: 18px;
+    width: 90vw;
+    max-width: 320px;
+  }
 }
-@media (max-width: 400px) {
-  .photobooth-center { padding: 2vw 1vw 8px 1vw; }
-  .photobooth-preview { max-width: 98vw; }
+
+/* --- Tối ưu slider sắc nét cho mobile --- */
+@media (max-width: 600px) {
+  .sharpness-slider {
+    width: 90vw !important;
+    max-width: 320px;
+    margin: 0 auto 8px auto;
+    height: 32px;
+  }
+  .sharpness-label {
+    font-size: 15px;
+    margin-bottom: 2px;
+    text-align: left;
+  }
 }
 
 /* Style cho thông báo lỗi camera */
@@ -480,6 +618,147 @@ body {
   .preview-vertical {
     width: 90vw;
     min-width: 0;
+    max-width: 320px;
+  }
+}
+
+/* --- Responsive tối ưu cho mobile giao diện chụp ảnh --- */
+@media (max-width: 600px) {
+  body {
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+    background: #e6faff;
+  }
+  .photobooth-wrapper {
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+    padding: 0;
+    min-height: 100vh;
+    max-width: 100vw;
+  }
+  .photobooth-left {
+    width: 100vw;
+    max-width: 100vw;
+    min-width: 0;
+    padding: 0 0 0 0;
+    align-items: center;
+  }
+  .photobooth-title {
+    font-size: 28px;
+    margin-top: 12px;
+    margin-bottom: 2px;
+    text-align: center;
+  }
+  .photobooth-sub {
+    font-size: 16px;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .photobooth-controls {
+    width: 98vw;
+    max-width: 98vw;
+    padding: 8px 2vw 12px 2vw;
+    border-radius: 18px;
+    box-shadow: 0 2px 8px #b2f7ef;
+  }
+  .photobooth-selects {
+    flex-direction: row;
+    gap: 8px;
+    margin-bottom: 8px;
+    justify-content: center;
+    align-items: center;
+  }
+  .photobooth-selects label {
+    font-size: 15px;
+  }
+  .photobooth-selects select {
+    font-size: 15px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    margin-right: 4px;
+  }
+  .photobooth-preview {
+    max-width: 98vw;
+    width: 98vw;
+    aspect-ratio: 770 / 565;
+    border-radius: 12px;
+    margin: 0 auto 8px auto;
+    box-shadow: 0 2px 8px #b2f7ef;
+  }
+  .photobooth-preview video {
+    border-radius: 12px;
+  }
+  #status {
+    font-size: 15px;
+    bottom: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    border-radius: 10px;
+  }
+  .photobooth-actions {
+    gap: 8px;
+    margin: 12px 0 8px 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .round-btn, .round-btn.auto, .round-btn.disabled, .upload-btn-main {
+    width: 56px;
+    height: 56px;
+    font-size: 15px;
+    border-radius: 50%;
+    margin: 0 2px;
+  }
+  .filters-title {
+    font-size: 15px;
+    margin-bottom: 4px;
+    margin-left: 0;
+    text-align: left;
+  }
+  .filters {
+    gap: 8px;
+    margin: 0 0 8px 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    width: 98vw;
+    max-width: 98vw;
+    padding-bottom: 4px;
+  }
+  .filter-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 11px;
+    border-radius: 50%;
+    margin-bottom: 2px;
+  }
+  .filter-label {
+    font-size: 9px;
+  }
+  .photobooth-right {
+    width: 100vw;
+    max-width: 100vw;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
+  }
+  .captured-list {
+    flex-direction: row;
+    gap: 8px;
+    justify-content: center;
+  }
+  .captured-item {
+    width: 54px;
+    height: 44px;
+    border-radius: 8px;
+  }
+  .download-btn {
+    font-size: 16px;
+    padding: 10px 18px;
+    border-radius: 18px;
+    width: 90vw;
     max-width: 320px;
   }
 }
