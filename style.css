@@ -232,23 +232,6 @@ body {
   object-fit: cover;
   border-radius: 22px;
 }
-.captured-item .delete-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(255,255,255,0.85);
-  border: none;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  color: #3bb6c5;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 1px 4px #b2f7ef;
-}
 .download-btn {
   display: block;
   margin: 24px auto 0 auto;
@@ -265,12 +248,106 @@ body {
 }
 .download-btn:active { transform: scale(0.97); }
 .download-btn:hover { background: #0097a7; }
-@media (max-width: 900px) {
-  .photobooth-wrapper { flex-direction: column; gap: 0; align-items: center; }
-  .photobooth-right { flex: 1 1 100%; flex-direction: row; gap: 12px; margin-top: 24px; justify-content: center; }
-  .captured-list { flex-direction: row; gap: 12px; }
-  .captured-item { width: 90px; height: 70px; border-radius: 12px; }
+
+/* Nút Tiếp tục */
+.continue-btn {
+  width: 180px;
+  background: #b2f7ef; /* Màu xanh pastel */
+  color: #3bb6c5; /* Màu chữ xanh đậm */
+  font-size: 22px;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-weight: bold;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(178, 247, 239, 0.5); /* Đổ bóng cùng tông màu */
+  padding: 16px 0 8px 0;
+  margin: 18px auto 0 auto;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  text-align: center;
+  display: block;
 }
+.continue-btn:hover {
+  background: #a0e0e0; /* Màu xanh đậm hơn khi hover */
+  box-shadow: 0 4px 24px rgba(178, 247, 239, 0.7);
+}
+.continue-btn.disabled {
+  background: #e0e0e0; /* Màu xám khi disabled */
+  color: #a0a0a0;
+  cursor: not-allowed;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  opacity: 0.7;
+}
+.continue-sub {
+  color: #3bb6c5; /* Đảm bảo màu chữ sub-text cũng phù hợp */
+  font-size: 15px;
+  font-weight: normal;
+}
+
+
+/* Responsive cho PC (màn hình lớn hơn 900px) */
+@media (min-width: 901px) {
+  .photobooth-wrapper {
+    flex-direction: row;
+    gap: 48px;
+    align-items: flex-start;
+    padding-top: 32px;
+  }
+  .photobooth-left {
+    max-width: 480px;
+  }
+  .photobooth-right {
+    flex-direction: column;
+    gap: 32px;
+    margin-top: 90px; /* Căn chỉnh với phần trên của photobooth-left */
+  }
+  .captured-list {
+    flex-direction: column;
+    gap: 32px;
+  }
+  .captured-item {
+    width: 180px;
+    height: 140px;
+  }
+}
+
+/* Responsive cho tablet (màn hình nhỏ hơn 900px) */
+@media (max-width: 900px) {
+  .photobooth-wrapper {
+    flex-direction: column;
+    gap: 0; /* Giảm khoảng cách giữa các phần */
+    align-items: center;
+    padding-top: 12px; /* Giảm padding top */
+  }
+  .photobooth-right {
+    flex: 1 1 100%;
+    flex-direction: row; /* Chuyển ảnh đã chụp sang hàng ngang */
+    gap: 12px;
+    margin-top: 24px;
+    justify-content: center;
+    width: 100%; /* Đảm bảo chiếm hết chiều rộng */
+    padding: 0 10px; /* Thêm padding ngang */
+    box-sizing: border-box; /* Bao gồm padding trong width */
+  }
+  .captured-list {
+    flex-direction: row;
+    gap: 12px;
+    flex-wrap: wrap; /* Cho phép xuống dòng nếu nhiều ảnh */
+    justify-content: center;
+  }
+  .captured-item {
+    width: 90px; /* Kích thước nhỏ hơn cho ảnh đã chụp */
+    height: 70px;
+    border-radius: 12px;
+  }
+  .continue-btn {
+    margin-top: 24px; /* Tăng khoảng cách với ảnh đã chụp */
+    width: 90%; /* Chiếm gần hết chiều rộng */
+    max-width: 300px; /* Giới hạn chiều rộng tối đa */
+  }
+}
+
+/* Responsive tối ưu cho mobile (màn hình nhỏ hơn 600px) */
 @media (max-width: 600px) {
   body {
     font-size: 18px;
@@ -290,7 +367,7 @@ body {
     width: 100vw;
     max-width: 100vw;
     min-width: 0;
-    padding: 0 0 0 0;
+    padding: 0;
     align-items: center;
   }
   .photobooth-title {
@@ -330,7 +407,7 @@ body {
   .photobooth-preview {
     max-width: 98vw;
     width: 98vw;
-    aspect-ratio: 770 / 565;
+    aspect-ratio: 770 / 565; /* Giữ tỷ lệ khung hình */
     border-radius: 12px;
     margin: 0 auto 8px auto;
     box-shadow: 0 2px 8px #b2f7ef;
@@ -368,7 +445,7 @@ body {
     gap: 8px;
     margin: 0 0 8px 0;
     flex-wrap: nowrap;
-    overflow-x: auto;
+    overflow-x: auto; /* Cho phép cuộn ngang trên mobile */
     justify-content: flex-start;
     width: 98vw;
     max-width: 98vw;
@@ -408,21 +485,6 @@ body {
     border-radius: 18px;
     width: 90vw;
     max-width: 320px;
-  }
-}
-
-/* --- Tối ưu slider sắc nét cho mobile --- */
-@media (max-width: 600px) {
-  .sharpness-slider {
-    width: 90vw !important;
-    max-width: 320px;
-    margin: 0 auto 8px auto;
-    height: 32px;
-  }
-  .sharpness-label {
-    font-size: 15px;
-    margin-bottom: 2px;
-    text-align: left;
   }
 }
 
@@ -438,326 +500,5 @@ body {
   padding: 12px 6px;
   border-radius: 10px;
   z-index: 2;
-}
-
-/* CSS cho popup chọn khung, sticker */
-.frame-popup {
-  position: fixed;
-  z-index: 9999;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.18);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.2s;
-}
-@keyframes fadeIn {
-  from { opacity: 0; } to { opacity: 1; }
-}
-.frame-popup-content {
-  background: #f0fdff;
-  border-radius: 24px;
-  box-shadow: 0 8px 40px #b2f7ef;
-  padding: 32px 24px 24px 24px;
-  min-width: 320px;
-  max-width: 98vw;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.close-frame-popup {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: #e0f7fa;
-  border: none;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  font-size: 26px;
-  color: #3bb6c5;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #b2f7ef;
-}
-.frame-popup-content h2 {
-  color: #3bb6c5;
-  font-size: 28px;
-  margin-bottom: 18px;
-  font-family: 'Pacifico', cursive;
-}
-.frame-list {
-  display: flex;
-  flex-direction: row;
-  gap: 18px;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.frame-thumb {
-  border: 2px solid #7ed6df;
-  border-radius: 14px;
-  background: #fff;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-size: 15px;
-  color: #3bb6c5;
-  min-width: 60px;
-  min-height: 60px;
-  transition: border 0.2s, box-shadow 0.2s;
-}
-.frame-thumb.selected {
-  border: 3px solid #3bb6c5;
-  box-shadow: 0 0 0 6px #e6faff;
-}
-.frame-thumb img {
-  width: 60px; height: 60px; object-fit: contain; border-radius: 10px;
-}
-.sticker-list {
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.sticker-thumb {
-  border: 2px solid #7ed6df;
-  border-radius: 50%;
-  background: #fff;
-  width: 44px;
-  height: 44px;
-  font-size: 24px;
-  color: #3bb6c5;
-  cursor: pointer;
-  transition: border 0.2s, box-shadow 0.2s;
-}
-.sticker-thumb.selected {
-  border: 3px solid #3bb6c5;
-  box-shadow: 0 0 0 6px #e6faff;
-}
-#popupDownloadBtn.download-btn {
-  background: #3bb6c5;
-  color: #fff;
-  font-size: 18px;
-  border-radius: 16px;
-  padding: 12px 32px;
-  margin-top: 10px;
-  box-shadow: 0 2px 8px #b2f7ef;
-}
-#popupDownloadBtn.download-btn:hover { background: #0097a7; }
-/* Preview dọc các ảnh đã chụp bên trái */
-.preview-vertical {
-  width: 220px;
-  min-height: 420px;
-  background: #fff;
-  border-radius: 22px;
-  box-shadow: 0 4px 24px #b2f7ef;
-  border: 3px solid #ffb6d5;
-  padding: 18px 8px 18px 8px;
-  margin: 0 auto 18px auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-}
-.preview-vertical img {
-  width: 220px;
-  height: 161px; /* 220 / 161 ≈ 1.366, gần nhất với 770/565 */
-  object-fit: cover;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px #e6faff;
-  border: 2px solid #7ed6df;
-  background: #f0fdff;
-}
-
-.continue-btn {
-  width: 180px;
-  background: linear-gradient(180deg, #ffe6f7 0%, #ffe6fa 100%);
-  color: #ff6f91;
-  font-size: 22px;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
-  font-weight: bold;
-  border: none;
-  border-radius: 16px;
-  box-shadow: 0 2px 16px #ffb6d5;
-  padding: 16px 0 8px 0;
-  margin: 18px auto 0 auto;
-  cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
   text-align: center;
-  display: block;
-}
-.continue-btn:hover {
-  background: #ffd6ef;
-  box-shadow: 0 4px 24px #ffb6d5;
-}
-.continue-sub {
-  font-size: 15px;
-  color: #ffb6d5;
-  font-weight: normal;
-}
-.preview-note {
-  color: #b2b2b2;
-  font-size: 13px;
-  margin-top: 8px;
-  text-align: center;
-  font-weight: normal;
-}
-
-/* Responsive cho preview dọc */
-@media (max-width: 900px) {
-  .photobooth-wrapper {
-    flex-direction: column;
-    gap: 18px;
-    align-items: center;
-  }
-  .preview-vertical {
-    width: 90vw;
-    min-width: 0;
-    max-width: 320px;
-  }
-}
-
-/* --- Responsive tối ưu cho mobile giao diện chụp ảnh --- */
-@media (max-width: 600px) {
-  body {
-    font-size: 18px;
-    padding: 0;
-    margin: 0;
-    background: #e6faff;
-  }
-  .photobooth-wrapper {
-    flex-direction: column;
-    gap: 0;
-    align-items: center;
-    padding: 0;
-    min-height: 100vh;
-    max-width: 100vw;
-  }
-  .photobooth-left {
-    width: 100vw;
-    max-width: 100vw;
-    min-width: 0;
-    padding: 0 0 0 0;
-    align-items: center;
-  }
-  .photobooth-title {
-    font-size: 28px;
-    margin-top: 12px;
-    margin-bottom: 2px;
-    text-align: center;
-  }
-  .photobooth-sub {
-    font-size: 16px;
-    margin-bottom: 8px;
-    text-align: center;
-  }
-  .photobooth-controls {
-    width: 98vw;
-    max-width: 98vw;
-    padding: 8px 2vw 12px 2vw;
-    border-radius: 18px;
-    box-shadow: 0 2px 8px #b2f7ef;
-  }
-  .photobooth-selects {
-    flex-direction: row;
-    gap: 8px;
-    margin-bottom: 8px;
-    justify-content: center;
-    align-items: center;
-  }
-  .photobooth-selects label {
-    font-size: 15px;
-  }
-  .photobooth-selects select {
-    font-size: 15px;
-    padding: 6px 8px;
-    border-radius: 8px;
-    margin-right: 4px;
-  }
-  .photobooth-preview {
-    max-width: 98vw;
-    width: 98vw;
-    aspect-ratio: 770 / 565;
-    border-radius: 12px;
-    margin: 0 auto 8px auto;
-    box-shadow: 0 2px 8px #b2f7ef;
-  }
-  .photobooth-preview video {
-    border-radius: 12px;
-  }
-  #status {
-    font-size: 15px;
-    bottom: 8px;
-    right: 8px;
-    padding: 4px 10px;
-    border-radius: 10px;
-  }
-  .photobooth-actions {
-    gap: 8px;
-    margin: 12px 0 8px 0;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .round-btn, .round-btn.auto, .round-btn.disabled, .upload-btn-main {
-    width: 56px;
-    height: 56px;
-    font-size: 15px;
-    border-radius: 50%;
-    margin: 0 2px;
-  }
-  .filters-title {
-    font-size: 15px;
-    margin-bottom: 4px;
-    margin-left: 0;
-    text-align: left;
-  }
-  .filters {
-    gap: 8px;
-    margin: 0 0 8px 0;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    justify-content: flex-start;
-    width: 98vw;
-    max-width: 98vw;
-    padding-bottom: 4px;
-  }
-  .filter-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 11px;
-    border-radius: 50%;
-    margin-bottom: 2px;
-  }
-  .filter-label {
-    font-size: 9px;
-  }
-  .photobooth-right {
-    width: 100vw;
-    max-width: 100vw;
-    flex-direction: row;
-    gap: 8px;
-    margin-top: 12px;
-    justify-content: center;
-  }
-  .captured-list {
-    flex-direction: row;
-    gap: 8px;
-    justify-content: center;
-  }
-  .captured-item {
-    width: 54px;
-    height: 44px;
-    border-radius: 8px;
-  }
-  .download-btn {
-    font-size: 16px;
-    padding: 10px 18px;
-    border-radius: 18px;
-    width: 90vw;
-    max-width: 320px;
-  }
 }

@@ -9,40 +9,36 @@ const fileInput = document.getElementById('fileInput');
 const capturedList = document.getElementById('capturedList');
 const continueBtn = document.getElementById('continueBtn');
 const filters = document.getElementById('filters');
-const finalCanvas = document.getElementById('finalCanvas');
-const framePicker = document.getElementById('framePicker');
-const downloadBtn = document.getElementById('downloadBtn');
+const photoCountSelect = document.getElementById('photoCount'); // Element chọn số lượng ảnh
+const statusElement = document.getElementById('status'); // Element hiển thị trạng thái đã chụp
 
-let stream = null;
-let capturedImages = [];
-let selectedFilter = 'none';
-let selectedFrame = 0;
-let maxPhotos = 4;
+// Các biến và hằng số liên quan đến popup chọn khung và sticker đã được loại bỏ
+// vì chức năng này sẽ được xử lý trên trang download.html
 
-const FRAMES = [
-  { name: 'Không khung', border: null, overlay: null },
-  { name: 'Khung Hồng', border: '#ffb6d5', overlay: null },
-  { name: 'Khung Xanh', border: '#b2f7ef', overlay: null },
-  { name: 'Sticker Tim', border: null, overlay: '❤️' },
-  { name: 'Sticker Ngôi Sao', border: null, overlay: '⭐' },
-  { name: 'Chữ "PhotoXinhh"', border: null, overlay: 'PhotoXinhh 💕' },
-];
+let stream = null; // Luồng video từ webcam
+let capturedImages = []; // Mảng chứa các ảnh đã chụp (dạng Data URL)
+let selectedFilter = 'none'; // Filter màu đang chọn
+let maxPhotos = parseInt(photoCountSelect.value); // Số lượng ảnh tối đa cần chụp, lấy từ giá trị mặc định của select
 
-// Hiệu ứng nút
-[manualBtn, autoBtn, retryBtn].forEach(btn => {
-  btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.93)');
+// Danh sách các khung ảnh có sẵn và sticker/chữ đã được loại bỏ
+// vì chức năng này sẽ được xử lý trên trang download.html
+
+// Hiệu ứng nhấn cho các nút
+[manualBtn, autoBtn, retryBtn, uploadBtn, continueBtn].forEach(btn => {
+  btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.96)');
   btn.addEventListener('mouseup', () => btn.style.transform = 'scale(1)');
   btn.addEventListener('mouseleave', () => btn.style.transform = 'scale(1)');
 });
 
-// Truy cập webcam
+// Hàm khởi động camera
 async function startCamera() {
   try {
     stream = await navigator.mediaDevices.getUserMedia({ video: true });
     video.srcObject = stream;
     video.play();
-    document.getElementById('cameraError').style.display = 'none';
+    document.getElementById('cameraError').style.display = 'none'; // Ẩn thông báo lỗi nếu camera hoạt động
   } catch (e) {
+    // Hiển thị thông báo lỗi nếu không thể truy cập camera
     document.getElementById('cameraError').style.display = 'block';
     document.getElementById('cameraError').innerHTML =
       'Không thể truy cập camera!<br>\uD83D\uDEAB<br>\u003Cul style="text-align:left;font-size:14px;line-height:1.5;max-width:220px;margin:8px auto 0 auto;"\u003E' +
@@ -54,17 +50,21 @@ async function startCamera() {
   }
 }
 
-startCamera();
+startCamera(); // Gọi hàm khởi động camera khi tải trang
 
-// Chụp ảnh từ webcam
+// Hàm chụp ảnh từ webcam
 function captureFromWebcam() {
-  if (!video.srcObject) return;
-  // Lấy frame gốc từ webcam
+  if (!video.srcObject) return; // Không chụp nếu không có luồng video
+  
+  // Lấy kích thước gốc của video
   const rawW = video.videoWidth;
   const rawH = video.videoHeight;
+  // Kích thước mục tiêu cho ảnh (tỷ lệ 770x565)
   const targetW = 770, targetH = 565, targetRatio = targetW / targetH;
   let sx = 0, sy = 0, sw = rawW, sh = rawH;
   const rawRatio = rawW / rawH;
+
+  // Tính toán crop để giữ tỷ lệ 770x565
   if (rawRatio > targetRatio) {
     // Webcam rộng hơn, crop 2 bên
     sw = rawH * targetRatio;
@@ -74,88 +74,101 @@ function captureFromWebcam() {
     sh = rawW / targetRatio;
     sy = (rawH - sh) / 2;
   }
-  // Tạo canvas đúng tỷ lệ 770x565
+
+  // Tạo một canvas tạm thời để vẽ ảnh đã chụp
   const canvas = document.createElement('canvas');
   canvas.width = targetW;
   canvas.height = targetH;
   const ctx = canvas.getContext('2d');
+  
+  // Vẽ ảnh từ video lên canvas, đã crop
   ctx.drawImage(video, sx, sy, sw, sh, 0, 0, targetW, targetH);
+  
+  // Áp dụng filter màu đã chọn lên ảnh
   applyFilterToCanvas(ctx, targetW, targetH);
+  
+  // Trả về ảnh dưới dạng Data URL (base64)
   return canvas.toDataURL('image/png');
 }
 
-// Áp filter màu
+// Hàm áp dụng filter màu lên canvas
 function applyFilterToCanvas(ctx, w, h) {
   switch(selectedFilter) {
     case 'dreamy':
       ctx.globalAlpha = 0.35;
-      ctx.fillStyle = '#b2f7ef';
+      ctx.fillStyle = '#b2f7ef'; // Màu xanh nhạt
       ctx.fillRect(0,0,w,h);
       ctx.globalAlpha = 1;
       break;
     case 'fresh':
       ctx.globalAlpha = 0.25;
-      ctx.fillStyle = '#7ed6df';
+      ctx.fillStyle = '#7ed6df'; // Màu xanh tươi
       ctx.fillRect(0,0,w,h);
       ctx.globalAlpha = 1;
       break;
     case 'warm':
       ctx.globalAlpha = 0.18;
-      ctx.fillStyle = '#ffe4b5';
+      ctx.fillStyle = '#ffe4b5'; // Màu vàng ấm
       ctx.fillRect(0,0,w,h);
       ctx.globalAlpha = 1;
       break;
     case 'film':
       ctx.globalAlpha = 0.18;
-      ctx.fillStyle = '#e0e0e0';
+      ctx.fillStyle = '#e0e0e0'; // Màu xám nhạt (hiệu ứng film)
       ctx.fillRect(0,0,w,h);
       ctx.globalAlpha = 1;
       break;
     case 'natural':
       ctx.globalAlpha = 0.12;
-      ctx.fillStyle = '#eaffd0';
+      ctx.fillStyle = '#eaffd0'; // Màu xanh lá nhạt tự nhiên
       ctx.fillRect(0,0,w,h);
       ctx.globalAlpha = 1;
       break;
     case 'vintage':
       ctx.globalAlpha = 0.18;
-      ctx.fillStyle = '#f5e6c8';
+      ctx.fillStyle = '#f5e6c8'; // Màu be cổ điển
       ctx.fillRect(0,0,w,h);
       ctx.globalAlpha = 1;
       break;
     case 'bw':
       ctx.globalAlpha = 1;
-      ctx.filter = 'grayscale(1)';
-      ctx.drawImage(ctx.canvas, 0, 0, w, h);
-      ctx.filter = 'none';
+      ctx.filter = 'grayscale(1)'; // Chuyển sang đen trắng
+      ctx.drawImage(ctx.canvas, 0, 0, w, h); // Vẽ lại ảnh đã filter
+      ctx.filter = 'none'; // Reset filter
       break;
     default:
-      // Không filter
+      // Không áp dụng filter nào
       break;
   }
 }
 
-// Hiển thị ảnh đã chụp/tải lên
+// Hàm hiển thị danh sách ảnh đã chụp/tải lên
 function renderCapturedList() {
-  capturedList.innerHTML = '';
-  capturedImages.forEach((img, idx) => {
+  capturedList.innerHTML = ''; // Xóa danh sách cũ
+  capturedImages.forEach((imgSrc, idx) => {
     const div = document.createElement('div');
     div.className = 'captured-item';
-    div.innerHTML = `<img src="${img}" draggable="false"><button class="delete-btn" title="Xóa" data-idx="${idx}">🗑️</button>`;
+    // Thêm nút xóa cho mỗi ảnh
+    div.innerHTML = `<img src="${imgSrc}" draggable="false"><button class="delete-btn" title="Xóa" data-idx="${idx}">🗑️</button>`;
     capturedList.appendChild(div);
   });
-  // Xử lý xóa ảnh
+  
+  // Gán sự kiện click cho nút xóa
   capturedList.querySelectorAll('.delete-btn').forEach(btn => {
     btn.onclick = e => {
-      const i = +btn.dataset.idx;
-      capturedImages.splice(i, 1);
-      renderCapturedList();
-      updateRetryBtn();
+      const i = +btn.dataset.idx; // Lấy index của ảnh cần xóa
+      capturedImages.splice(i, 1); // Xóa ảnh khỏi mảng
+      renderCapturedList(); // Render lại danh sách
+      updateRetryBtn(); // Cập nhật trạng thái nút "Chụp Lại"
+      updateContinueButtonState(); // Cập nhật trạng thái nút "Tiếp tục"
+      updateStatus(); // Cập nhật trạng thái "Đã Chụp X/Y"
+      saveImagesToLocalStorage(); // Lưu lại vào Local Storage
     };
   });
-  updateRetryBtn();
+  updateRetryBtn(); // Cập nhật trạng thái nút "Chụp Lại" ban đầu
 }
 
+// Hàm cập nhật trạng thái nút "Chụp Lại"
 function updateRetryBtn() {
   if (capturedImages.length > 0) {
     retryBtn.classList.remove('disabled');
@@ -166,74 +179,92 @@ function updateRetryBtn() {
   }
 }
 
-// Chụp thủ công
+// Sự kiện click nút "Chụp thủ công"
 manualBtn.onclick = () => {
-  if (capturedImages.length >= maxPhotos) return;
-  const img = captureFromWebcam();
+  if (capturedImages.length >= maxPhotos) return; // Không chụp nếu đã đủ ảnh
+  const img = captureFromWebcam(); // Chụp ảnh
   if (img) {
-    capturedImages.push(img);
-    renderCapturedList();
-    updateStatus();
-    saveImagesToLocalStorage();
-    checkShowFramePopup();
+    capturedImages.push(img); // Thêm ảnh vào mảng
+    renderCapturedList(); // Render lại danh sách
+    updateStatus(); // Cập nhật trạng thái
+    saveImagesToLocalStorage(); // Lưu vào Local Storage
+    updateContinueButtonState(); // Cập nhật trạng thái nút "Tiếp tục"
   }
 };
 
-// Chụp lại
+// Sự kiện click nút "Chụp Lại"
 retryBtn.onclick = () => {
-  capturedImages = [];
-  renderCapturedList();
-  saveImagesToLocalStorage();
+  capturedImages = []; // Xóa tất cả ảnh đã chụp
+  renderCapturedList(); // Render lại danh sách rỗng
+  saveImagesToLocalStorage(); // Lưu lại vào Local Storage
+  updateStatus(); // Cập nhật trạng thái
+  updateContinueButtonState(); // Cập nhật trạng thái nút "Tiếp tục"
 };
 
-// Chụp auto
+// Sự kiện click nút "AUTO"
 autoBtn.onclick = async () => {
-  if (capturedImages.length >= maxPhotos) return;
-  let countdownVal = parseInt(document.getElementById('countdown').value) || 0;
+  if (capturedImages.length >= maxPhotos) return; // Không chụp nếu đã đủ ảnh
+  
+  let countdownVal = parseInt(document.getElementById('countdown').value) || 0; // Lấy giá trị đếm ngược
+  
+  // Lặp để chụp đủ số ảnh còn thiếu
   for (let i = capturedImages.length; i < maxPhotos; i++) {
     let countdown = countdownVal;
+    // Đếm ngược (nếu có)
     while (countdown > 0) {
-      autoBtn.innerText = countdown + 's';
-      await new Promise(r => setTimeout(r, 1000));
+      autoBtn.innerText = countdown + 's'; // Hiển thị số giây đếm ngược trên nút
+      await new Promise(r => setTimeout(r, 1000)); // Chờ 1 giây
       countdown--;
     }
-    autoBtn.innerText = 'AUTO';
-    const img = captureFromWebcam();
+    autoBtn.innerText = 'AUTO'; // Reset chữ trên nút
+    
+    const img = captureFromWebcam(); // Chụp ảnh
     if (img) {
-      capturedImages.push(img);
-      renderCapturedList();
-      updateStatus();
-      saveImagesToLocalStorage();
-      checkShowFramePopup();
+      capturedImages.push(img); // Thêm ảnh vào mảng
+      renderCapturedList(); // Render lại danh sách
+      updateStatus(); // Cập nhật trạng thái
+      saveImagesToLocalStorage(); // Lưu vào Local Storage
+      updateContinueButtonState(); // Cập nhật trạng thái nút "Tiếp tục"
     }
-    await new Promise(r => setTimeout(r, 400)); // nghỉ 1 chút giữa các lần chụp
+    await new Promise(r => setTimeout(r, 400)); // Nghỉ một chút giữa các lần chụp
   }
-  autoBtn.innerText = 'AUTO';
+  autoBtn.innerText = 'AUTO'; // Đảm bảo nút trở lại trạng thái ban đầu
 };
 
+// Hàm cập nhật trạng thái "Đã Chụp X/Y"
 function updateStatus() {
-  const status = document.getElementById('status');
-  status.textContent = `Đã Chụp ${capturedImages.length}/${maxPhotos}`;
+  statusElement.textContent = `Đã Chụp ${capturedImages.length}/${maxPhotos}`;
 }
 
-// Tải ảnh lên
-uploadBtn.onclick = () => fileInput.click();
+// Sự kiện click nút "Tải ảnh lên"
+uploadBtn.onclick = () => fileInput.click(); // Kích hoạt input file ẩn
 fileInput.onchange = e => {
+  // Lấy các file đã chọn, giới hạn số lượng để không vượt quá maxPhotos
   const files = Array.from(fileInput.files).slice(0, maxPhotos - capturedImages.length);
+  let filesLoaded = 0; // Đếm số file đã tải xong
+  
+  if (files.length === 0) return; // Không làm gì nếu không có file nào được chọn
+
   files.forEach(file => {
-    const reader = new FileReader();
+    const reader = new FileReader(); // Tạo FileReader để đọc file
     reader.onload = ev => {
-      capturedImages.push(ev.target.result);
-      renderCapturedList();
+      capturedImages.push(ev.target.result); // Thêm ảnh Data URL vào mảng
+      filesLoaded++;
+      if (filesLoaded === files.length) { // Khi tất cả file đã được xử lý
+        renderCapturedList(); // Render lại danh sách ảnh
+        updateStatus(); // Cập nhật trạng thái
+        saveImagesToLocalStorage(); // Lưu vào Local Storage
+        updateContinueButtonState(); // Cập nhật trạng thái nút "Tiếp tục"
+      }
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(file); // Đọc file dưới dạng Data URL
   });
-  fileInput.value = '';
+  fileInput.value = ''; // Xóa giá trị input file để có thể tải lại cùng file
 };
 
-// Hiển thị filter trực tiếp trên camera
+// Element overlay để hiển thị filter trực tiếp trên webcam
 let filterOverlay = document.getElementById('filterOverlay');
-if (!filterOverlay) {
+if (!filterOverlay) { // Tạo overlay nếu chưa có
   filterOverlay = document.createElement('div');
   filterOverlay.id = 'filterOverlay';
   filterOverlay.style.position = 'absolute';
@@ -241,159 +272,131 @@ if (!filterOverlay) {
   filterOverlay.style.left = 0;
   filterOverlay.style.width = '100%';
   filterOverlay.style.height = '100%';
-  filterOverlay.style.pointerEvents = 'none';
+  filterOverlay.style.pointerEvents = 'none'; // Không chặn sự kiện chuột
   filterOverlay.style.zIndex = 2;
   document.querySelector('.photobooth-preview').appendChild(filterOverlay);
 }
 
+// Hàm cập nhật style của overlay filter
 function updateFilterOverlay() {
-  let style = '';
+  // Đặt lại tất cả các style liên quan đến filter trước khi áp dụng cái mới
+  filterOverlay.style.background = ''; // Xóa background
+  filterOverlay.style.filter = ''; // Xóa filter
+  filterOverlay.style.backdropFilter = ''; // Xóa backdrop-filter
+  video.style.filter = ''; // Đảm bảo reset filter trên video element
+
   switch(selectedFilter) {
     case 'dreamy':
-      style = 'background:rgba(178,247,239,0.35);'; break;
+      filterOverlay.style.background = 'rgba(178,247,239,0.35)';
+      break;
     case 'fresh':
-      style = 'background:rgba(126,214,223,0.25);'; break;
+      filterOverlay.style.background = 'rgba(126,214,223,0.25)';
+      break;
     case 'warm':
-      style = 'background:rgba(255,228,181,0.18);'; break;
+      filterOverlay.style.background = 'rgba(255,228,181,0.18)';
+      break;
     case 'film':
-      style = 'background:rgba(224,224,224,0.18);'; break;
+      filterOverlay.style.background = 'rgba(224,224,224,0.18)';
+      break;
     case 'natural':
-      style = 'background:rgba(234,255,208,0.12);'; break;
+      filterOverlay.style.background = 'rgba(234,255,208,0.12)';
+      break;
     case 'vintage':
-      style = 'background:rgba(245,230,200,0.18);'; break;
+      filterOverlay.style.background = 'rgba(245,230,200,0.18)';
+      break;
     case 'bw':
-      style = 'backdrop-filter: grayscale(1); filter: grayscale(1);'; break;
+      // Áp dụng grayscale filter trực tiếp lên video element
+      video.style.filter = 'grayscale(1)';
+      break;
     default:
-      style = 'background:transparent; filter:none; backdrop-filter:none;';
+      // 'none' case, đã reset ở trên
+      break;
   }
-  filterOverlay.style = filterOverlay.style.cssText.split(';').slice(0,7).join(';')+';'+style;
 }
 
-// Cập nhật filter overlay khi chọn filter
+// Sự kiện click chọn filter
 filters.onclick = e => {
   if (e.target.closest('.filter-btn')) {
-    filters.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('selected'));
+    filters.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('selected')); // Bỏ chọn tất cả
     const btn = e.target.closest('.filter-btn');
-    btn.classList.add('selected');
-    selectedFilter = btn.dataset.filter;
-    updateFilterOverlay();
+    btn.classList.add('selected'); // Chọn nút được click
+    selectedFilter = btn.dataset.filter; // Cập nhật filter đang chọn
+    updateFilterOverlay(); // Cập nhật overlay
   }
 };
 
-// Cập nhật filter overlay khi load trang
-updateFilterOverlay();
+updateFilterOverlay(); // Cập nhật filter overlay khi tải trang lần đầu
 
-// --- Trang trí khung ảnh sau khi chụp đủ 4 ảnh ---
+// --- Logic cho nút "Tiếp tục" (chuyển hướng sang download.html) ---
+
+// Sự kiện click nút "Tiếp tục"
 continueBtn.onclick = () => {
   if (capturedImages.length < maxPhotos) {
-    alert('Bạn cần đủ ' + maxPhotos + ' ảnh!');
+    // Thay thế alert bằng một thông báo tùy chỉnh (có thể là một modal khác)
+    // Hiện tại dùng alert tạm thời, nhưng trong ứng dụng thực tế nên dùng modal đẹp hơn
+    alert('Bạn cần chụp/tải đủ ' + maxPhotos + ' ảnh để tiếp tục!');
     return;
   }
-  // Hiện chọn khung
-  framePicker.innerHTML = FRAMES.map((f, i) => `<button class="frame-btn${i===0?' selected':''}" data-idx="${i}">${f.name}</button>`).join('');
-  framePicker.style.display = 'flex';
-  downloadBtn.style.display = 'none';
-  selectedFrame = 0;
-  framePicker.querySelectorAll('.frame-btn').forEach(btn => {
-    btn.onclick = () => {
-      framePicker.querySelectorAll('.frame-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      selectedFrame = +btn.dataset.idx;
-      renderFinalImage();
-    };
-  });
-  renderFinalImage();
-};
-
-function renderFinalImage() {
-  // Ghép ảnh và vẽ khung/trang trí
-  const imgEls = [];
-  let loaded = 0;
-  capturedImages.forEach((src, i) => {
-    const img = new window.Image();
-    img.onload = () => {
-      loaded++;
-      if (loaded === maxPhotos) mergeImages();
-    };
-    img.src = src;
-    imgEls[i] = img;
-  });
-  function mergeImages() {
-    const w = Math.max(...imgEls.map(i => i.width));
-    const h = imgEls.reduce((sum, i) => sum + i.height, 0);
-    finalCanvas.width = w;
-    finalCanvas.height = h;
-    const ctx = finalCanvas.getContext('2d');
-    let y = 0;
-    imgEls.forEach(img => {
-      ctx.drawImage(img, 0, y, w, img.height);
-      // Vẽ border nếu có
-      if (FRAMES[selectedFrame].border) {
-        ctx.save();
-        ctx.strokeStyle = FRAMES[selectedFrame].border;
-        ctx.lineWidth = 10;
-        ctx.strokeRect(5, y+5, w-10, img.height-10);
-        ctx.restore();
-      }
-      // Vẽ overlay nếu có
-      if (FRAMES[selectedFrame].overlay) {
-        ctx.save();
-        ctx.font = '32px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
-        ctx.fillStyle = '#ff4b91';
-        ctx.fillText(FRAMES[selectedFrame].overlay, w/2, y+12);
-        ctx.restore();
-      }
-      y += img.height;
-    });
-    finalCanvas.style.display = 'block';
-    downloadBtn.href = finalCanvas.toDataURL('image/png');
-    downloadBtn.style.display = 'block';
-  }
-}
-
-downloadBtn.onclick = () => {
-  downloadBtn.download = 'photobooth.png';
-};
-
-// Đổi số lượng ảnh
-const photoCount = document.getElementById('photoCount');
-photoCount.onchange = () => {
-  maxPhotos = parseInt(photoCount.value);
-  capturedImages = [];
-  renderCapturedList();
-  updateStatus();
+  // Lưu ảnh vào Local Storage trước khi chuyển trang
   saveImagesToLocalStorage();
+  // Chuyển hướng người dùng đến trang download.html
+  window.location.href = 'download.html';
 };
 
-// Hiệu ứng cho uploadBtn
-uploadBtn.onmousedown = () => uploadBtn.style.transform = 'scale(0.96)';
-uploadBtn.onmouseup = uploadBtn.onmouseleave = () => uploadBtn.style.transform = 'scale(1)';
-
-// Khi chụp đủ số ảnh (2, 3, 4 tuỳ chọn), show popup chọn khung
-function checkShowFramePopup() {
+// Hàm cập nhật trạng thái nút "Tiếp tục" (enabled/disabled)
+function updateContinueButtonState() {
   if (capturedImages.length === maxPhotos) {
-    saveImagesToLocalStorage();
-    window.location.href = 'download.html'; // hoặc '/download' nếu deploy trên web thật
+    continueBtn.classList.remove('disabled');
+    continueBtn.disabled = false;
+  } else {
+    continueBtn.classList.add('disabled');
+    continueBtn.disabled = true;
   }
 }
 
-// Khởi tạo
-renderCapturedList();
-updateRetryBtn();
-updateStatus();
+// Sự kiện thay đổi số lượng ảnh cần chụp (2, 3, 4 ảnh)
+photoCountSelect.onchange = () => {
+  maxPhotos = parseInt(photoCountSelect.value); // Cập nhật số lượng ảnh tối đa
+  // Nếu số ảnh đã chụp vượt quá số lượng mới, cắt bớt
+  if (capturedImages.length > maxPhotos) {
+    capturedImages = capturedImages.slice(0, maxPhotos);
+  }
+  renderCapturedList(); // Render lại danh sách
+  updateStatus(); // Cập nhật trạng thái
+  saveImagesToLocalStorage(); // Lưu vào Local Storage
+  updateContinueButtonState(); // Cập nhật trạng thái nút "Tiếp tục"
+};
 
+// Hàm lưu ảnh đã chụp vào Local Storage
 function saveImagesToLocalStorage() {
   localStorage.setItem('photobooth_images', JSON.stringify(capturedImages));
 }
 
-// Khi tải trang, kiểm tra và phục hồi ảnh từ localStorage nếu có
-window.onload = () => {
+// Khi tải trang, kiểm tra và phục hồi ảnh từ Local Storage nếu có
+window.addEventListener('load', () => {
   const storedImages = JSON.parse(localStorage.getItem('photobooth_images'));
   if (storedImages && storedImages.length > 0) {
     capturedImages = storedImages;
-    renderCapturedList();
-    updateStatus();
   }
-};
+  // Khôi phục giá trị maxPhotos từ Local Storage hoặc dùng mặc định
+  const storedPhotoCount = localStorage.getItem('photobooth_maxPhotos');
+  if (storedPhotoCount) {
+    photoCountSelect.value = storedPhotoCount;
+    maxPhotos = parseInt(storedPhotoCount);
+  }
+
+  renderCapturedList(); // Render danh sách ảnh ban đầu
+  updateStatus(); // Cập nhật trạng thái ban đầu
+  updateContinueButtonState(); // Cập nhật trạng thái nút "Tiếp tục" ban đầu
+});
+
+// Lưu lựa chọn số lượng ảnh vào Local Storage khi thay đổi
+photoCountSelect.addEventListener('change', () => {
+  localStorage.setItem('photobooth_maxPhotos', photoCountSelect.value);
+});
+
+// Các hàm khởi tạo ban đầu khi script được tải
+renderCapturedList();
+updateRetryBtn();
+updateStatus();
+updateContinueButtonState(); // Đảm bảo nút "Tiếp tục" có trạng thái đúng ngay từ đầu

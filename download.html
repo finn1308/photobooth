@@ -8,11 +8,11 @@
   <style>
     /* CSS tổng thể cho giao diện pastel, dễ thương */
     body {
-      background: #fff6fa; /* Nền màu hồng nhạt */
+      background: #e0f7fa; /* Nền màu xanh nhạt */
       font-family: 'Comic Sans MS', cursive, sans-serif; /* Font chữ vui tươi */
       margin: 0;
       padding: 0;
-      color: #ff6f91; /* Màu chữ chính: hồng đậm */
+      color: #7ed6df; /* Màu chữ chính: xanh đậm */
     }
 
     /* Phần header của trang */
@@ -21,24 +21,24 @@
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      background: #ffe0f0; /* Nền header màu hồng nhạt hơn */
+      background: #c0efff; /* Nền header màu xanh nhạt hơn */
       padding: 24px 0 12px 0;
-      box-shadow: 0 2px 12px #ffd6f7; /* Đổ bóng nhẹ */
+      box-shadow: 0 2px 12px #a0e0ff; /* Đổ bóng nhẹ */
     }
 
     /* Tiêu đề ứng dụng */
     .photobooth-title {
       font-family: 'Pacifico', cursive; /* Font đặc biệt cho tiêu đề */
       font-size: 38px;
-      color: #ff6f91;
+      color: #7ed6df;
       margin: 0 0 4px 0;
       letter-spacing: 2px;
     }
 
     /* Nút "Quay Lại" */
     .continue-btn {
-      background: linear-gradient(135deg, #ffe0f0 0%, #ffd6f7 100%); /* Gradient màu hồng */
-      color: #ff6f91;
+      background: linear-gradient(135deg, #c0efff 0%, #a0e0ff 100%); /* Gradient màu xanh */
+      color: #7ed6df;
       border: none;
       border-radius: 18px;
       padding: 18px 36px 10px 36px;
@@ -47,7 +47,7 @@
       font-weight: bold;
       margin: 32px auto 0 auto;
       display: block;
-      box-shadow: 0 2px 16px #ffd6f7;
+      box-shadow: 0 2px 16px #a0e0ff;
       text-align: center;
       transition: background 0.2s; /* Hiệu ứng chuyển động khi hover */
       cursor: pointer;
@@ -59,18 +59,18 @@
       font-family: 'Comic Sans MS', cursive, sans-serif;
       font-weight: normal;
       margin-top: 2px;
-      color: #ff6f91;
+      color: #7ed6df;
       opacity: 0.8;
     }
 
     .continue-btn:hover {
-      background: #ffeaf7; /* Màu nền khi hover */
+      background: #d0f0ff; /* Màu nền khi hover */
     }
 
     /* Trạng thái tải ảnh (ví dụ: "Bạn đã chụp X ảnh") */
     .download-status {
       text-align: center;
-      color: #ff6f91;
+      color: #7ed6df;
       font-size: 18px;
       margin-top: 18px;
       margin-bottom: 0;
@@ -79,8 +79,8 @@
 
     /* Nút chung cho photobooth (Tải xuống) */
     .photobooth-btn {
-      background: linear-gradient(135deg, #ffe0f0 0%, #ffd6f7 100%);
-      color: #ff6f91;
+      background: linear-gradient(135deg, #c0efff 0%, #a0e0ff 100%);
+      color: #7ed6df;
       border: none;
       border-radius: 18px;
       padding: 14px 36px 10px 36px;
@@ -89,19 +89,19 @@
       font-weight: bold;
       margin: 18px auto 0 auto;
       display: block;
-      box-shadow: 0 2px 16px #ffd6f7;
+      box-shadow: 0 2px 16px #a0e0ff;
       text-align: center;
       transition: background 0.2s;
       cursor: pointer;
     }
 
     .photobooth-btn:hover {
-      background: #ffeaf7;
+      background: #d0f0ff;
     }
 
     /* Nút "Xóa tất cả ảnh" */
     .download-clear-btn {
-      background: #ff6f91; /* Màu nền hồng đậm */
+      background: #7ed6df; /* Màu nền xanh đậm */
       color: #fff; /* Chữ trắng */
       border: none;
       border-radius: 12px;
@@ -110,11 +110,11 @@
       margin: 24px auto 0 auto;
       display: block;
       cursor: pointer;
-      box-shadow: 0 2px 8px #ffd6f7;
+      box-shadow: 0 2px 8px #a0e0ff;
     }
 
     .download-clear-btn:hover {
-      background: #ff4778; /* Màu nền khi hover */
+      background: #47b2c2; /* Màu nền khi hover */
     }
 
     /* Khu vực chính chứa các phần (Preview, Khung, Sticker) */
@@ -132,7 +132,7 @@
     .download-preview, .download-frames, .download-stickers {
       background: #fff; /* Nền trắng */
       border-radius: 24px;
-      box-shadow: 0 2px 16px #ffd6f7;
+      box-shadow: 0 2px 16px #a0e0ff;
       padding: 24px 18px 32px 18px;
       min-width: 320px;
       max-width: 350px;
@@ -149,7 +149,7 @@
     /* Tiêu đề phụ trong các khối nội dung */
     .photobooth-sub {
       font-family: 'Pacifico', cursive;
-      color: #ff6f91;
+      color: #7ed6df;
       font-size: 24px;
       margin-bottom: 12px;
     }
@@ -157,9 +157,9 @@
     /* Khu vực hiển thị ảnh preview */
     .preview-area {
       min-height: 320px; /* Chiều cao tối thiểu */
-      background: #fff6fa;
+      background: #e0f7fa;
       border-radius: 18px;
-      box-shadow: 0 2px 8px #ffd6f7;
+      box-shadow: 0 2px 8px #a0e0ff;
       margin-bottom: 18px;
       width: 100%;
       display: flex;
@@ -185,14 +185,14 @@
     .frame-thumb {
       width: 100%;
       border-radius: 12px;
-      box-shadow: 0 2px 8px #ffd6f7;
+      box-shadow: 0 2px 8px #a0e0ff;
       cursor: pointer;
       border: 3px solid transparent; /* Viền trong suốt mặc định */
       transition: border 0.2s; /* Hiệu ứng chuyển động khi chọn */
     }
 
     .frame-thumb.selected {
-      border: 3px solid #ff6f91; /* Viền hồng khi được chọn */
+      border: 3px solid #7ed6df; /* Viền xanh khi được chọn */
     }
 
     /* Danh sách các sticker */
@@ -209,15 +209,15 @@
       width: 64px;
       height: 64px;
       border-radius: 12px;
-      box-shadow: 0 2px 8px #ffd6f7;
+      box-shadow: 0 2px 8px #a0e0ff;
       cursor: grab; /* Con trỏ kéo */
-      background: #fff6fa;
+      background: #e0f7fa;
       border: 2px solid transparent;
       transition: border 0.2s;
     }
 
     .sticker-thumb:active {
-      border: 2px solid #ff6f91; /* Viền hồng khi đang kéo */
+      border: 2px solid #7ed6df; /* Viền xanh khi đang kéo */
     }
 
     /* Wrapper cho sticker đã thêm vào preview */
@@ -241,11 +241,11 @@
       height: 22px;
       border-radius: 50%;
       border: none;
-      background: #fff6fa;
-      color: #ff6f91; /* Màu chữ */
+      background: #e0f7fa;
+      color: #7ed6df; /* Màu chữ */
       font-size: 16px;
       font-weight: bold;
-      box-shadow: 0 2px 8px #ffd6f7;
+      box-shadow: 0 2px 8px #a0e0ff;
       cursor: pointer;
       z-index: 20; /* Đảm bảo nút nằm trên sticker */
       display: flex;
@@ -254,19 +254,19 @@
     }
 
     .sticker-btn:hover {
-      background: #ffe0f0;
-      color: #ff4778;
+      background: #c0efff;
+      color: #47b2c2;
     }
 
     .sticker-delete {
-      background: #ff4778; /* Màu nền đỏ cho nút xóa */
+      background: #47b2c2; /* Màu nền xanh đậm cho nút xóa */
       color: #fff;
       font-size: 15px;
     }
 
     .sticker-delete:hover {
-      background: #ffb6d5;
-      color: #ff4778;
+      background: #8edfea;
+      color: #47b2c2;
     }
 
     /* =================================================================== */
@@ -303,7 +303,7 @@
         max-width: 340px;
         margin: 18px auto 0 auto;
         border-radius: 24px; /* Bo góc lớn hơn */
-        box-shadow: 0 2px 12px #ffd6f7;
+        box-shadow: 0 2px 12px #a0e0ff;
       }
 
       .preview-area {
@@ -315,7 +315,7 @@
         max-width: 340px;
         margin: 0 auto 8px auto;
         border-radius: 16px;
-        box-shadow: 0 2px 8px #ffd6f7;
+        box-shadow: 0 2px 8px #a0e0ff;
       }
 
       .frame-list {
@@ -351,7 +351,7 @@
         height: 32px;
         font-size: 22px;
         border-radius: 50%;
-        box-shadow: 0 2px 8px #ffd6f7;
+        box-shadow: 0 2px 8px #a0e0ff;
       }
 
       .sticker-delete {
@@ -365,7 +365,7 @@
     @media (max-width: 600px) {
       body {
         font-size: 16px;
-        background: #fffafd; /* Nền hơi khác một chút */
+        background: #e0f7fa; /* Nền hơi khác một chút */
       }
       .download-header {
         box-shadow: none; /* Bỏ bóng header */
@@ -443,15 +443,15 @@
       <div class="frame-list">
         <!-- Các ảnh khung mẫu. Bạn có thể thay đổi src và data-frame -->
         <img src="frame1.png" alt="Khung 1" class="frame-thumb selected" data-frame="frame1" />
-        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame2" alt="Khung 2" class="frame-thumb" data-frame="frame2" />
-        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame3" alt="Khung 3" class="frame-thumb" data-frame="frame3" />
-        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame4" alt="Khung 4" class="frame-thumb" data-frame="frame4" />
-        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame5" alt="Khung 5" class="frame-thumb" data-frame="frame5" />
-        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame6" alt="Khung 6" class="frame-thumb" data-frame="frame6" />
-        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame7" alt="Khung 7" class="frame-thumb" data-frame="frame7" />
-        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame8" alt="Khung 8" class="frame-thumb" data-frame="frame8" />
-        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame9" alt="Khung 9" class="frame-thumb" data-frame="frame9" />
-        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame10" alt="Khung 10" class="frame-thumb" data-frame="frame10" />
+        <img src="https://placehold.co/100x150/c0efff/7ed6df?text=Frame2" alt="Khung 2" class="frame-thumb" data-frame="frame2" />
+        <img src="https://placehold.co/100x150/c0efff/7ed6df?text=Frame3" alt="Khung 3" class="frame-thumb" data-frame="frame3" />
+        <img src="https://placehold.co/100x150/c0efff/7ed6df?text=Frame4" alt="Khung 4" class="frame-thumb" data-frame="frame4" />
+        <img src="https://placehold.co/100x150/c0efff/7ed6df?text=Frame5" alt="Khung 5" class="frame-thumb" data-frame="frame5" />
+        <img src="https://placehold.co/100x150/c0efff/7ed6df?text=Frame6" alt="Khung 6" class="frame-thumb" data-frame="frame6" />
+        <img src="https://placehold.co/100x150/c0efff/7ed6df?text=Frame7" alt="Khung 7" class="frame-thumb" data-frame="frame7" />
+        <img src="https://placehold.co/100x150/c0efff/7ed6df?text=Frame8" alt="Khung 8" class="frame-thumb" data-frame="frame8" />
+        <img src="https://placehold.co/100x150/c0efff/7ed6df?text=Frame9" alt="Khung 9" class="frame-thumb" data-frame="frame9" />
+        <img src="https://placehold.co/100x150/c0efff/7ed6df?text=Frame10" alt="Khung 10" class="frame-thumb" data-frame="frame10" />
       </div>
     </section>
 
@@ -460,16 +460,16 @@
       <h2 class="photobooth-sub">Sticker</h2>
       <div class="sticker-list">
         <!-- Các ảnh sticker mẫu. Bạn có thể thay đổi src -->
-        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S1" alt="Sticker 1" class="sticker-thumb" draggable="true" />
-        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S2" alt="Sticker 2" class="sticker-thumb" draggable="true" />
-        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S3" alt="Sticker 3" class="sticker-thumb" draggable="true" />
-        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S4" alt="Sticker 4" class="sticker-thumb" draggable="true" />
-        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S5" alt="Sticker 5" class="sticker-thumb" draggable="true" />
-        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S6" alt="Sticker 6" class="sticker-thumb" draggable="true" />
-        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S7" alt="Sticker 7" class="sticker-thumb" draggable="true" />
-        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S8" alt="Sticker 8" class="sticker-thumb" draggable="true" />
-        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S9" alt="Sticker 9" class="sticker-thumb" draggable="true" />
-        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S10" alt="Sticker 10" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/c0efff/7ed6df?text=S1" alt="Sticker 1" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/c0efff/7ed6df?text=S2" alt="Sticker 2" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/c0efff/7ed6df?text=S3" alt="Sticker 3" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/c0efff/7ed6df?text=S4" alt="Sticker 4" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/c0efff/7ed6df?text=S5" alt="Sticker 5" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/c0efff/7ed6df?text=S6" alt="Sticker 6" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/c0efff/7ed6df?text=S7" alt="Sticker 7" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/c0efff/7ed6df?text=S8" alt="Sticker 8" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/c0efff/7ed6df?text=S9" alt="Sticker 9" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/c0efff/7ed6df?text=S10" alt="Sticker 10" class="sticker-thumb" draggable="true" />
       </div>
     </section>
   </main>
@@ -509,7 +509,7 @@
       }
 
       // Khung mặc định được chọn ban đầu
-      let selectedFrame = frameThumbs[0] ? frameThumbs[0].getAttribute('src') : 'https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame1';
+      let selectedFrame = frameThumbs[0] ? frameThumbs[0].getAttribute('src') : 'https://placehold.co/100x150/c0efff/7ed6df?text=Frame1';
       if (frameThumbs[0]) {
           frameThumbs[0].classList.add('selected'); // Chọn khung đầu tiên mặc định
       }

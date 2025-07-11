@@ -31,6 +31,8 @@
         </div>
         <div class="photobooth-preview">
           <video id="video" autoplay playsinline></video>
+          <div id="cameraError" class="camera-error" style="display:none;"></div>
+          <div id="filterOverlay"></div>
           <div id="status">Đã Chụp 0/4</div>
         </div>
         <div class="photobooth-actions">
@@ -54,25 +56,15 @@
     </div>
     <div class="photobooth-right">
       <div class="captured-list" id="capturedList"></div>
+      <!-- Nút Tiếp tục, chỉ hiện khi đủ ảnh -->
+      <button class="continue-btn disabled" id="continueBtn" disabled>
+        Tiếp tục<br><span class="continue-sub">(Chọn Khung Ảnh)</span>
+      </button>
     </div>
   </div>
   <input type="file" id="fileInput" accept="image/*" multiple style="display:none;" />
-  <canvas id="finalCanvas" style="display:none;"></canvas>
-  <a id="downloadBtn" class="download-btn" style="display:none;">Tải ảnh về để in</a>
+  <!-- finalCanvas và downloadBtn sẽ được xử lý trên download.html -->
 
-  <script>
-    function manualCapture() {
-      alert('🚨 Sẽ chụp thủ công! (code chức năng sau)');
-    }
-
-    function autoCapture() {
-      alert('🤖 Sẽ chụp tự động (code phần này sau)');
-    }
-
-    function uploadPhotos() {
-      alert('📁 Tải ảnh từ thư viện (chưa code xử lý)');
-    }
-  </script>
   <script src="photobooth.js"></script>
 </body>
 </html>
