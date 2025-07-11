@@ -539,9 +539,8 @@ window.addEventListener('DOMContentLoaded', () => {
             for (let idx = 0; idx < imgObjs.length; idx++) {
               if (photoSlots[idx]) {
                 const slot = photoSlots[idx];
-                const img = imgObjs[idx];
-                // --- CROP ẢNH VỀ ĐÚNG TỶ LỆ 770x656 (1.173:1) ---
-                const targetW = 770, targetH = 656, targetRatio = targetW / targetH;
+                // --- CROP ẢNH VỀ ĐÚNG TỶ LỆ 770x565 (1.36:1) ---
+                const targetW = 770, targetH = 565, targetRatio = targetW / targetH;
                 let sx = 0, sy = 0, sw = img.width, sh = img.height;
                 const imgRatio = img.width / img.height;
                 if (imgRatio > targetRatio) {
