@@ -308,9 +308,10 @@
 
       .preview-area {
         min-width: unset;
-        min-height: 420px; /* Chiều cao cố định cho mobile preview */
+        max-height: 420px; /* Thay đổi từ height sang max-height */
         width: 100%;
-        height: 420px;
+        height: auto; /* Cho phép chiều cao tự động */
+        overflow-y: auto; /* Cho phép cuộn dọc */
         max-width: 340px;
         margin: 0 auto 8px auto;
         border-radius: 16px;
@@ -537,13 +538,18 @@
         h: Math.round(slot.h * scale)
       }));
 
+      // Bán kính bo tròn cho các ảnh nhỏ
+      const imageBorderRadius = 12; // Đơn vị pixel
+
       /**
        * Cắt và vẽ ảnh vào slot trên canvas, đảm bảo đúng tỉ lệ và căn giữa.
+       * Áp dụng bo tròn góc cho ảnh.
        * @param {CanvasRenderingContext2D} ctx - Context của canvas.
        * @param {HTMLImageElement} img - Đối tượng ảnh gốc.
        * @param {Object} slot - Thông tin về vị trí và kích thước slot trên canvas.
+       * @param {number} radius - Bán kính bo tròn góc.
        */
-      function cropAndDrawImage(ctx, img, slot) {
+      function cropAndDrawImage(ctx, img, slot, radius) {
         const imgW = img.width;
         const imgH = img.height;
         const slotRatio = slot.w / slot.h; // Tỷ lệ khung hình của slot
@@ -560,8 +566,27 @@
           sh = imgW / slotRatio;
           sy = Math.round((imgH - sh) / 2);
         }
+
+        ctx.save(); // Lưu trạng thái canvas hiện tại
+
+        // Tạo đường dẫn bo tròn góc
+        ctx.beginPath();
+        ctx.moveTo(slot.x + radius, slot.y);
+        ctx.lineTo(slot.x + slot.w - radius, slot.y);
+        ctx.arcTo(slot.x + slot.w, slot.y, slot.x + slot.w, slot.y + radius, radius);
+        ctx.lineTo(slot.x + slot.w, slot.y + slot.h - radius);
+        ctx.arcTo(slot.x + slot.w, slot.y + slot.h, slot.x + slot.w - radius, slot.y + slot.h, radius);
+        ctx.lineTo(slot.x + radius, slot.y + slot.h);
+        ctx.arcTo(slot.x, slot.y + slot.h, slot.x, slot.y + slot.h - radius, radius);
+        ctx.lineTo(slot.x, slot.y + radius);
+        ctx.arcTo(slot.x, slot.y, slot.x + radius, slot.y, radius);
+        ctx.closePath();
+        ctx.clip(); // Cắt ảnh theo đường dẫn này
+
         // Vẽ ảnh đã crop vào vị trí và kích thước của slot trên canvas
         ctx.drawImage(img, sx, sy, sw, sh, slot.x, slot.y, slot.w, slot.h);
+
+        ctx.restore(); // Khôi phục trạng thái canvas (quan trọng để không ảnh hưởng đến các lần vẽ sau)
       }
 
       /**
@@ -578,7 +603,8 @@
         const frameImg = new Image();
         frameImg.src = selectedFrame; // Sử dụng khung đã chọn
         frameImg.onload = () => {
-          ctx.drawImage(frameImg, 0, 0, previewWidth, previewHeight); // Vẽ khung lên canvas
+          // Vẽ khung trước, sau đó vẽ ảnh lên trên
+          ctx.drawImage(frameImg, 0, 0, previewWidth, previewHeight);
 
           let loadedImages = 0;
           const imgObjs = images.map(src => {
@@ -595,7 +621,8 @@
                 // Khi tất cả ảnh đã tải xong, vẽ chúng lên canvas
                 imgObjs.forEach((loadedImg, idx) => {
                   if (previewSlots[idx]) {
-                    cropAndDrawImage(ctx, loadedImg, previewSlots[idx]);
+                    // Gọi hàm cropAndDrawImage với bán kính bo tròn
+                    cropAndDrawImage(ctx, loadedImg, previewSlots[idx], imageBorderRadius * scale); // Scale bán kính cho preview
                   }
                 });
                 previewArea.appendChild(canvas); // Thêm canvas vào khu vực preview
@@ -871,7 +898,23 @@
                     tctx.drawImage(originalImg, sx, sy, sw, sh, 0, 0, targetW, targetH);
 
                     // Vẽ ảnh đã crop từ tempCanvas vào vị trí slot trên canvas chính
+                    // Áp dụng bo tròn góc cho ảnh khi tải về
+                    ctx.save(); // Lưu trạng thái canvas
+                    ctx.beginPath();
+                    ctx.moveTo(slot.x + imageBorderRadius, slot.y);
+                    ctx.lineTo(slot.x + slot.w - imageBorderRadius, slot.y);
+                    ctx.arcTo(slot.x + slot.w, slot.y, slot.x + slot.w, slot.y + imageBorderRadius, imageBorderRadius);
+                    ctx.lineTo(slot.x + slot.w, slot.y + slot.h - imageBorderRadius);
+                    ctx.arcTo(slot.x + slot.w, slot.y + slot.h, slot.x + slot.w - imageBorderRadius, slot.y + slot.h, imageBorderRadius);
+                    ctx.lineTo(slot.x + imageBorderRadius, slot.y + slot.h);
+                    ctx.arcTo(slot.x, slot.y + slot.h, slot.x, slot.y + slot.h - imageBorderRadius, imageBorderRadius);
+                    ctx.lineTo(slot.x, slot.y + imageBorderRadius);
+                    ctx.arcTo(slot.x, slot.y, slot.x + imageBorderRadius, slot.y, imageBorderRadius);
+                    ctx.closePath();
+                    ctx.clip(); // Cắt ảnh theo đường dẫn bo tròn
+
                     ctx.drawImage(tempCanvas, slot.x, slot.y, slot.w, slot.h);
+                    ctx.restore(); // Khôi phục trạng thái canvas
                   }
                 }
 
