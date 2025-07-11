@@ -653,19 +653,8 @@
         });
       });
 
-      // Xử lý kéo thả sticker từ danh sách sticker
-      stickerThumbs.forEach(sticker => {
-        sticker.addEventListener('dragstart', e => {
-          e.dataTransfer.setData('stickerSrc', sticker.getAttribute('src')); // Lưu src của sticker
-        });
-      });
-
-      // Xử lý thả sticker vào khu vực preview
-      previewArea.addEventListener('dragover', e => e.preventDefault()); // Cho phép thả
-      previewArea.addEventListener('drop', e => {
-        e.preventDefault();
-        const src = e.dataTransfer.getData('stickerSrc'); // Lấy src của sticker
-        if (src) {
+      // Hàm để thêm sticker vào preview (tái sử dụng logic từ drop event)
+      function addStickerToPreview(src, initialX, initialY) {
           const wrapper = document.createElement('div');
           wrapper.className = 'sticker-wrapper';
           wrapper.style.position = 'absolute';
@@ -734,17 +723,9 @@
           wrapper.appendChild(btnMinus);
           wrapper.appendChild(btnDelete);
 
-          // Đặt vị trí ban đầu của sticker (tại vị trí thả)
-          const rect = previewArea.getBoundingClientRect();
-          let x = e.clientX - rect.left - (wrapper.offsetWidth / 2); // Căn giữa sticker tại điểm thả
-          let y = e.clientY - rect.top - (wrapper.offsetHeight / 2);
-
-          // Đảm bảo sticker nằm trong giới hạn của previewArea
-          x = Math.max(0, Math.min(x, previewArea.offsetWidth - wrapper.offsetWidth));
-          y = Math.max(0, Math.min(y, previewArea.offsetHeight - wrapper.offsetHeight));
-
-          wrapper.style.left = x + 'px';
-          wrapper.style.top = y + 'px';
+          // Đặt vị trí ban đầu của sticker
+          wrapper.style.left = initialX + 'px';
+          wrapper.style.top = initialY + 'px';
 
           // Kích hoạt chức năng kéo thả cho sticker mới
           makeStickerDraggable(wrapper, previewArea);
@@ -752,6 +733,40 @@
 
           previewArea.appendChild(wrapper); // Thêm sticker vào preview
           stickers.push(wrapper); // Thêm vào mảng sticker
+      }
+
+
+      // Xử lý kéo thả sticker từ danh sách sticker
+      stickerThumbs.forEach(sticker => {
+        sticker.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('stickerSrc', sticker.getAttribute('src')); // Lưu src của sticker
+        });
+
+        // Thêm sự kiện click để thêm sticker
+        sticker.addEventListener('click', e => {
+            const src = sticker.getAttribute('src');
+            // Đặt sticker ở giữa khu vực preview khi click
+            const initialX = (previewArea.offsetWidth / 2) - 32; // 32 = 64px / 2 (nửa chiều rộng sticker ban đầu)
+            const initialY = (previewArea.offsetHeight / 2) - 32; // 32 = 64px / 2 (nửa chiều cao sticker ban đầu)
+            addStickerToPreview(src, initialX, initialY);
+        });
+      });
+
+      // Xử lý thả sticker vào khu vực preview
+      previewArea.addEventListener('dragover', e => e.preventDefault()); // Cho phép thả
+      previewArea.addEventListener('drop', e => {
+        e.preventDefault();
+        const src = e.dataTransfer.getData('stickerSrc'); // Lấy src của sticker
+        if (src) {
+          const rect = previewArea.getBoundingClientRect();
+          let x = e.clientX - rect.left - 32; // 32 = 64px / 2 (nửa chiều rộng sticker ban đầu)
+          let y = e.clientY - rect.top - 32; // 32 = 64px / 2 (nửa chiều cao sticker ban đầu)
+
+          // Đảm bảo sticker nằm trong giới hạn của previewArea
+          x = Math.max(0, Math.min(x, previewArea.offsetWidth - 64)); // 64 là kích thước sticker ban đầu
+          y = Math.max(0, Math.min(y, previewArea.offsetHeight - 64));
+
+          addStickerToPreview(src, x, y);
         }
       });
 
