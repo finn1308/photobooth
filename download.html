@@ -4,33 +4,41 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tải ảnh Photobooth</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Comic+Sans+MS&display=swap" rel="stylesheet">
   <style>
+    /* CSS tổng thể cho giao diện pastel, dễ thương */
     body {
-      background: #fff6fa;
-      font-family: 'Comic Sans MS', 'Pacifico', cursive, sans-serif;
+      background: #fff6fa; /* Nền màu hồng nhạt */
+      font-family: 'Comic Sans MS', cursive, sans-serif; /* Font chữ vui tươi */
       margin: 0;
       padding: 0;
-      color: #7ed6df;
+      color: #ff6f91; /* Màu chữ chính: hồng đậm */
     }
+
+    /* Phần header của trang */
     .download-header {
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      background: #ffe0f0;
+      background: #ffe0f0; /* Nền header màu hồng nhạt hơn */
       padding: 24px 0 12px 0;
-      box-shadow: 0 2px 12px #ffd6f7;
+      box-shadow: 0 2px 12px #ffd6f7; /* Đổ bóng nhẹ */
     }
+
+    /* Tiêu đề ứng dụng */
     .photobooth-title {
-      font-family: 'Pacifico', cursive;
+      font-family: 'Pacifico', cursive; /* Font đặc biệt cho tiêu đề */
       font-size: 38px;
-      color: #7ed6df;
+      color: #ff6f91;
       margin: 0 0 4px 0;
       letter-spacing: 2px;
     }
+
+    /* Nút "Quay Lại" */
     .continue-btn {
-      background: linear-gradient(135deg, #ffe0f0 0%, #ffd6f7 100%);
-      color: #7ed6df;
+      background: linear-gradient(135deg, #ffe0f0 0%, #ffd6f7 100%); /* Gradient màu hồng */
+      color: #ff6f91;
       border: none;
       border-radius: 18px;
       padding: 18px 36px 10px 36px;
@@ -41,31 +49,38 @@
       display: block;
       box-shadow: 0 2px 16px #ffd6f7;
       text-align: center;
-      transition: background 0.2s;
+      transition: background 0.2s; /* Hiệu ứng chuyển động khi hover */
+      cursor: pointer;
     }
+
     .continue-btn span {
       display: block;
       font-size: 15px;
       font-family: 'Comic Sans MS', cursive, sans-serif;
       font-weight: normal;
       margin-top: 2px;
-      color: #7ed6df;
+      color: #ff6f91;
       opacity: 0.8;
     }
+
     .continue-btn:hover {
-      background: #ffeaf7;
+      background: #ffeaf7; /* Màu nền khi hover */
     }
+
+    /* Trạng thái tải ảnh (ví dụ: "Bạn đã chụp X ảnh") */
     .download-status {
       text-align: center;
-      color: #7ed6df;
+      color: #ff6f91;
       font-size: 18px;
       margin-top: 18px;
       margin-bottom: 0;
       font-family: 'Comic Sans MS', cursive, sans-serif;
     }
+
+    /* Nút chung cho photobooth (Tải xuống) */
     .photobooth-btn {
       background: linear-gradient(135deg, #ffe0f0 0%, #ffd6f7 100%);
-      color: #7ed6df;
+      color: #ff6f91;
       border: none;
       border-radius: 18px;
       padding: 14px 36px 10px 36px;
@@ -79,85 +94,221 @@
       transition: background 0.2s;
       cursor: pointer;
     }
+
     .photobooth-btn:hover {
       background: #ffeaf7;
     }
-    .download-clear-btn { background: #7ed6df; color: #fff; border: none; border-radius: 12px; padding: 10px 24px; font-size: 16px; margin: 24px auto 0 auto; display: block; cursor: pointer; }
-    .download-clear-btn:hover { background: #ff4778; }
-    .download-main { display: flex; justify-content: center; align-items: flex-start; margin-top: 24px; }
-    .download-preview { background: #fffafd; border-radius: 18px; box-shadow: 0 2px 16px #ffd6f7; padding: 18px 18px 24px 18px; margin-right: 18px; min-width: 380px; }
-    .download-frames, .download-stickers { background: #fffafd; border-radius: 18px; box-shadow: 0 2px 16px #ffd6f7; padding: 18px 18px 24px 18px; min-width: 220px; margin-right: 18px; }
-    .download-frames { min-width: 260px; }
-    .download-stickers { min-width: 180px; }
-    .photobooth-sub { color: #7ed6df; font-size: 22px; font-weight: bold; text-align: center; margin: 0 0 18px 0; }
-    .frame-list { display: flex; align-items: center; gap: 12px; overflow-x: auto; padding-bottom: 8px; }
-    .frame-thumb { width: 60px; height: 80px; object-fit: contain; border-radius: 8px; border: 2px solid #ffd6f7; cursor: pointer; transition: border 0.2s; }
-    .frame-thumb.selected, .frame-thumb:hover { border: 2px solid #7ed6df; }
-    .sticker-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-    .sticker-thumb { width: 48px; height: 48px; object-fit: contain; border-radius: 8px; border: 2px solid #ffd6f7; cursor: grab; background: #fff; }
-    .sticker-thumb:hover { border: 2px solid #7ed6df; }
-    .preview-area { min-height: 1040px; min-width: 360px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; background: #fffafd; border-radius: 12px; box-shadow: 0 2px 12px #ffd6f7; margin-bottom: 12px; position: relative; }
-    .sticker-wrapper { position: absolute; }
+
+    /* Nút "Xóa tất cả ảnh" */
+    .download-clear-btn {
+      background: #ff6f91; /* Màu nền hồng đậm */
+      color: #fff; /* Chữ trắng */
+      border: none;
+      border-radius: 12px;
+      padding: 10px 24px;
+      font-size: 16px;
+      margin: 24px auto 0 auto;
+      display: block;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #ffd6f7;
+    }
+
+    .download-clear-btn:hover {
+      background: #ff4778; /* Màu nền khi hover */
+    }
+
+    /* Khu vực chính chứa các phần (Preview, Khung, Sticker) */
+    .download-main {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 32px; /* Khoảng cách giữa các cột */
+      margin: 32px auto 0 auto;
+      max-width: 1200px; /* Chiều rộng tối đa cho desktop */
+      min-height: 600px;
+    }
+
+    /* Các khối nội dung (Preview, Khung, Sticker) */
+    .download-preview, .download-frames, .download-stickers {
+      background: #fff; /* Nền trắng */
+      border-radius: 24px;
+      box-shadow: 0 2px 16px #ffd6f7;
+      padding: 24px 18px 32px 18px;
+      min-width: 320px;
+      max-width: 350px;
+      flex: 1 1 0; /* Cho phép các khối co giãn */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .download-preview {
+      min-width: 340px; /* Kích thước tối thiểu cho phần preview */
+    }
+
+    /* Tiêu đề phụ trong các khối nội dung */
+    .photobooth-sub {
+      font-family: 'Pacifico', cursive;
+      color: #ff6f91;
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    /* Khu vực hiển thị ảnh preview */
+    .preview-area {
+      min-height: 320px; /* Chiều cao tối thiểu */
+      background: #fff6fa;
+      border-radius: 18px;
+      box-shadow: 0 2px 8px #ffd6f7;
+      margin-bottom: 18px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative; /* Quan trọng cho việc định vị sticker */
+      overflow: hidden; /* Đảm bảo sticker không tràn ra ngoài */
+    }
+
+    /* Danh sách các khung ảnh */
+    .frame-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* 2 cột trên desktop */
+      gap: 16px;
+      width: 100%;
+      max-height: 400px; /* Giới hạn chiều cao và cho phép cuộn */
+      overflow-y: auto;
+      margin-bottom: 8px;
+    }
+
+    /* Ảnh thumbnail của khung */
+    .frame-thumb {
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #ffd6f7;
+      cursor: pointer;
+      border: 3px solid transparent; /* Viền trong suốt mặc định */
+      transition: border 0.2s; /* Hiệu ứng chuyển động khi chọn */
+    }
+
+    .frame-thumb.selected {
+      border: 3px solid #ff6f91; /* Viền hồng khi được chọn */
+    }
+
+    /* Danh sách các sticker */
+    .sticker-list {
+      display: flex;
+      flex-wrap: wrap; /* Cho phép sticker xuống dòng */
+      gap: 12px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    /* Ảnh thumbnail của sticker */
+    .sticker-thumb {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #ffd6f7;
+      cursor: grab; /* Con trỏ kéo */
+      background: #fff6fa;
+      border: 2px solid transparent;
+      transition: border 0.2s;
+    }
+
+    .sticker-thumb:active {
+      border: 2px solid #ff6f91; /* Viền hồng khi đang kéo */
+    }
+
+    /* Wrapper cho sticker đã thêm vào preview */
+    .sticker-wrapper {
+      position: absolute;
+      /* Kích thước ban đầu được đặt bằng JS */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .draggable-sticker {
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* Quan trọng để có thể kéo wrapper thay vì ảnh */
+    }
+
+    /* Nút điều khiển sticker (+, -, x) */
     .sticker-btn {
-      width: 22px; height: 22px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       border: none;
       background: #fff6fa;
-      color: #7ed6df;
+      color: #ff6f91; /* Màu chữ */
       font-size: 16px;
       font-weight: bold;
       box-shadow: 0 2px 8px #ffd6f7;
       cursor: pointer;
-      z-index: 20;
+      z-index: 20; /* Đảm bảo nút nằm trên sticker */
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    .sticker-btn:hover { background: #ffe0f0; color: #ff4778; }
+
+    .sticker-btn:hover {
+      background: #ffe0f0;
+      color: #ff4778;
+    }
+
     .sticker-delete {
-      background: #ff4778;
+      background: #ff4778; /* Màu nền đỏ cho nút xóa */
       color: #fff;
       font-size: 15px;
     }
-    .sticker-delete:hover { background: #ffb6d5; color: #ff4778; }
-    /* Mobile optimization */
-    @media (max-width: 600px) {
-      body {
-        font-size: 18px;
-        padding: 0;
-        margin: 0;
-        background: #fffafd;
+
+    .sticker-delete:hover {
+      background: #ffb6d5;
+      color: #ff4778;
+    }
+
+    /* =================================================================== */
+    /* Responsive Design cho Mobile (màn hình nhỏ hơn 1000px) */
+    /* =================================================================== */
+    @media (max-width: 1000px) {
+      .download-main {
+        flex-direction: column; /* Chuyển thành bố cục cột */
+        align-items: center; /* Căn giữa các khối */
+        gap: 18px; /* Khoảng cách giữa các khối */
+        max-width: 98vw; /* Chiều rộng tối đa trên mobile */
+        margin-top: 18px;
       }
-      .download-header {
-        box-shadow: none;
-        padding: 8px 0 0 0;
+
+      .download-preview, .download-frames, .download-stickers {
+        min-width: unset; /* Bỏ giới hạn chiều rộng tối thiểu */
+        max-width: 96vw; /* Chiều rộng tối đa trên mobile */
+        width: 100%; /* Mở rộng hết chiều rộng khả dụng */
+        padding: 18px 12px 24px 12px; /* Giảm padding */
       }
+
+      .download-preview {
+        max-width: 370px; /* Giới hạn chiều rộng cho preview */
+      }
+
       .photobooth-title {
-        font-size: 28px;
-        margin-bottom: 2px;
+        font-size: 32px; /* Giảm kích thước tiêu đề */
       }
+
       .continue-btn, .photobooth-btn, .download-clear-btn {
         font-size: 20px;
         padding: 16px 0;
-        width: 90vw;
+        width: 90vw; /* Chiều rộng nút lớn hơn */
         max-width: 340px;
         margin: 18px auto 0 auto;
-        border-radius: 24px;
+        border-radius: 24px; /* Bo góc lớn hơn */
         box-shadow: 0 2px 12px #ffd6f7;
       }
-      .download-main {
-        flex-direction: column;
-        align-items: center;
-        margin-top: 8px;
-        gap: 0;
-      }
-      .download-preview {
-        min-width: unset;
-        width: 96vw;
-        max-width: 370px;
-        margin: 0 auto 12px auto;
-        padding: 12px 4px 18px 4px;
-      }
+
       .preview-area {
         min-width: unset;
-        min-height: 420px;
+        min-height: 420px; /* Chiều cao cố định cho mobile preview */
         width: 100%;
         height: 420px;
         max-width: 340px;
@@ -165,18 +316,78 @@
         border-radius: 16px;
         box-shadow: 0 2px 8px #ffd6f7;
       }
-      .download-frames, .download-stickers {
-        min-width: unset;
-        width: 96vw;
-        max-width: 370px;
-        margin: 0 auto 12px auto;
+
+      .frame-list {
+        grid-template-columns: repeat(3, 1fr); /* 3 cột cho khung trên mobile */
+        gap: 12px;
+        max-height: 300px; /* Giảm chiều cao tối đa */
+      }
+
+      .frame-thumb {
+        width: 100%;
+        height: auto; /* Chiều cao tự động theo tỉ lệ */
+        border-radius: 10px;
+      }
+
+      .sticker-list {
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .sticker-thumb {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+      }
+
+      .photobooth-sub {
+        font-size: 20px; /* Giảm kích thước tiêu đề phụ */
+        margin-bottom: 10px;
+      }
+
+      .sticker-btn {
+        width: 32px; /* Nút điều khiển sticker lớn hơn */
+        height: 32px;
+        font-size: 22px;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px #ffd6f7;
+      }
+
+      .sticker-delete {
+        font-size: 20px;
+      }
+    }
+
+    /* =================================================================== */
+    /* Responsive Design cho Mobile (màn hình nhỏ hơn 600px - điều chỉnh thêm) */
+    /* =================================================================== */
+    @media (max-width: 600px) {
+      body {
+        font-size: 16px;
+        background: #fffafd; /* Nền hơi khác một chút */
+      }
+      .download-header {
+        box-shadow: none; /* Bỏ bóng header */
+        padding: 8px 0 0 0;
+      }
+      .photobooth-title {
+        font-size: 28px;
+        margin-bottom: 2px;
+      }
+      .download-main {
+        margin-top: 8px;
+        gap: 0;
+      }
+      .download-preview, .download-frames, .download-stickers {
         padding: 12px 4px 18px 4px;
+        margin: 0 auto 12px auto;
       }
       .frame-list {
+        grid-template-columns: repeat(2, 1fr); /* 2 cột cho khung trên màn hình rất nhỏ */
         gap: 8px;
-        overflow-x: auto;
+        overflow-x: auto; /* Cuộn ngang */
         padding-bottom: 8px;
-        flex-wrap: nowrap;
+        flex-wrap: nowrap; /* Ngăn không cho xuống dòng */
       }
       .frame-thumb {
         width: 48px;
@@ -185,419 +396,527 @@
       }
       .sticker-list {
         gap: 8px;
-        overflow-x: auto;
+        overflow-x: auto; /* Cuộn ngang */
         flex-wrap: nowrap;
-        justify-content: flex-start;
+        justify-content: flex-start; /* Căn trái khi cuộn ngang */
       }
       .sticker-thumb {
-        width: 56px;
-        height: 56px;
-        border-radius: 12px;
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
         margin-bottom: 4px;
       }
       .photobooth-sub {
         font-size: 18px;
         margin-bottom: 8px;
       }
-      .sticker-btn {
-        width: 32px;
-        height: 32px;
-        font-size: 22px;
-        border-radius: 50%;
-        box-shadow: 0 2px 8px #ffd6f7;
-      }
-      .sticker-delete {
-        font-size: 20px;
-      }
     }
-    /* Touch sticker drag for mobile */
   </style>
 </head>
 <body>
   <header class="download-header">
     <h1 class="photobooth-title">FinnBooth</h1>
   </header>
+
+  <!-- Hiển thị trạng thái hoặc yêu cầu chụp thêm ảnh -->
   <div id="downloadStatus" class="download-status"></div>
   <button id="continueBtn" class="continue-btn" style="display:none">
     Quay Lại
     <span>(Alo alo, về vị trí nào các vị ơi!)</span>
   </button>
+
   <main class="download-main photobooth-wrapper" id="mainDownloadArea">
+    <!-- Phần xem trước ảnh -->
     <section class="download-preview photobooth-left">
       <h2 class="photobooth-sub">Preview</h2>
       <div id="previewArea" class="preview-area">
         <!-- Ảnh ghép sẽ hiển thị ở đây -->
       </div>
-      <!-- Xóa nút cũ và thêm nút mới -->
       <button id="downloadNewBtn" class="photobooth-btn">Tải xuống</button>
       <button id="clearBtn" class="download-clear-btn">Xóa tất cả ảnh</button>
     </section>
+
+    <!-- Phần chọn khung ảnh -->
     <section class="download-frames photobooth-center">
       <h2 class="photobooth-sub">Chọn khung</h2>
       <div class="frame-list">
-        <img src="frame1.png" alt="Khung 1" class="frame-thumb" data-frame="frame1" />
-        <img src="frame2.png" alt="Khung 2" class="frame-thumb" data-frame="frame2" />
-        <img src="frame3.png" alt="Khung 3" class="frame-thumb" data-frame="frame3" />
-        <img src="frame4.png" alt="Khung 4" class="frame-thumb" data-frame="frame4" />
-        <img src="frame5.png" alt="Khung 5" class="frame-thumb" data-frame="frame5" />
-        <img src="frame6.png" alt="Khung 6" class="frame-thumb" data-frame="frame6" />
-        <img src="frame7.png" alt="Khung 7" class="frame-thumb" data-frame="frame7" />
-        <img src="frame8.png" alt="Khung 8" class="frame-thumb" data-frame="frame8" />
-        <img src="frame9.png" alt="Khung 9" class="frame-thumb" data-frame="frame9" />
-        <img src="frame10.png" alt="Khung 10" class="frame-thumb" data-frame="frame10" />
+        <!-- Các ảnh khung mẫu. Bạn có thể thay đổi src và data-frame -->
+        <img src="frame1.png" alt="Khung 1" class="frame-thumb selected" data-frame="frame1" />
+        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame2" alt="Khung 2" class="frame-thumb" data-frame="frame2" />
+        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame3" alt="Khung 3" class="frame-thumb" data-frame="frame3" />
+        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame4" alt="Khung 4" class="frame-thumb" data-frame="frame4" />
+        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame5" alt="Khung 5" class="frame-thumb" data-frame="frame5" />
+        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame6" alt="Khung 6" class="frame-thumb" data-frame="frame6" />
+        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame7" alt="Khung 7" class="frame-thumb" data-frame="frame7" />
+        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame8" alt="Khung 8" class="frame-thumb" data-frame="frame8" />
+        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame9" alt="Khung 9" class="frame-thumb" data-frame="frame9" />
+        <img src="https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame10" alt="Khung 10" class="frame-thumb" data-frame="frame10" />
       </div>
     </section>
+
+    <!-- Phần chọn Sticker -->
     <section class="download-stickers photobooth-right">
       <h2 class="photobooth-sub">Sticker</h2>
       <div class="sticker-list">
-        <img src="sticker1.png" alt="Sticker 1" class="sticker-thumb" draggable="true" />
-        <img src="sticker2.png" alt="Sticker 2" class="sticker-thumb" draggable="true" />
-        <img src="sticker3.png" alt="Sticker 3" class="sticker-thumb" draggable="true" />
-        <img src="sticker4.png" alt="Sticker 4" class="sticker-thumb" draggable="true" />
-        <img src="sticker5.png" alt="Sticker 5" class="sticker-thumb" draggable="true" />
-        <img src="sticker6.png" alt="Sticker 6" class="sticker-thumb" draggable="true" />
-        <img src="sticker7.png" alt="Sticker 7" class="sticker-thumb" draggable="true" />
-        <img src="sticker8.png" alt="Sticker 8" class="sticker-thumb" draggable="true" />
-        <img src="sticker9.png" alt="Sticker 9" class="sticker-thumb" draggable="true" />
-        <img src="sticker10.png" alt="Sticker 10" class="sticker-thumb" draggable="true" />
+        <!-- Các ảnh sticker mẫu. Bạn có thể thay đổi src -->
+        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S1" alt="Sticker 1" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S2" alt="Sticker 2" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S3" alt="Sticker 3" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S4" alt="Sticker 4" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S5" alt="Sticker 5" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S6" alt="Sticker 6" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S7" alt="Sticker 7" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S8" alt="Sticker 8" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S9" alt="Sticker 9" class="sticker-thumb" draggable="true" />
+        <img src="https://placehold.co/64x64/ffe0f0/ff6f91?text=S10" alt="Sticker 10" class="sticker-thumb" draggable="true" />
       </div>
     </section>
   </main>
+
   <script>
-// ...JS bắt đầu...
-window.addEventListener('DOMContentLoaded', () => {
-  const statusDiv = document.getElementById('downloadStatus');
-  const continueBtn = document.getElementById('continueBtn');
-  const mainArea = document.getElementById('mainDownloadArea');
-  const data = localStorage.getItem('photobooth_images');
-  let images = [];
-  if (data) {
-    images = JSON.parse(data);
-  }
-  const minImages = 2;
-  if (!images || images.length < minImages) {
-    mainArea.style.display = 'none';
-    statusDiv.innerHTML = `Bạn đã chụp <b>${images.length || 0}</b> ảnh. Hãy chụp đủ ${minImages} ảnh để tiếp tục!`;
-    continueBtn.style.display = 'block';
-    continueBtn.onclick = () => {
-      window.location.href = 'index.html';
-    };
-    return;
-  } else {
-    mainArea.style.display = '';
-    statusDiv.innerHTML = `Bạn đã chụp <b>${images.length}</b> ảnh. Hãy chọn khung và tải về nhé!`;
-    continueBtn.style.display = 'none';
-  }
-  // JS: chọn khung
-  let selectedFrame = 'frame1.png';
-  const frameThumbs = document.querySelectorAll('.frame-thumb');
-  frameThumbs.forEach(frame => {
-    frame.addEventListener('click', () => {
-      selectedFrame = frame.getAttribute('src');
-      frameThumbs.forEach(f => f.classList.remove('selected'));
-      frame.classList.add('selected');
-      updatePreview(); // Cập nhật preview ngay khi chọn khung
-    });
-  });
-  const stickerThumbs = document.querySelectorAll('.sticker-thumb');
-  let stickers = [];
-  stickerThumbs.forEach(sticker => {
-    sticker.addEventListener('dragstart', e => {
-      e.dataTransfer.setData('stickerSrc', sticker.getAttribute('src'));
-    });
-  });
-  const previewArea = document.getElementById('previewArea');
-  previewArea.addEventListener('dragover', e => e.preventDefault());
-  previewArea.addEventListener('drop', e => {
-    e.preventDefault();
-    const src = e.dataTransfer.getData('stickerSrc');
-    if (src) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'sticker-wrapper';
-      wrapper.style.position = 'absolute';
-      wrapper.style.width = '48px';
-      wrapper.style.height = '48px';
-      const img = document.createElement('img');
-      img.src = src;
-      img.className = 'draggable-sticker';
-      img.style.width = '100%';
-      img.style.height = '100%';
-      img.style.pointerEvents = 'none';
-      // Tạo nút phóng to/thu nhỏ
-      const btnPlus = document.createElement('button');
-      btnPlus.textContent = '+';
-      btnPlus.className = 'sticker-btn sticker-plus';
-      btnPlus.style.position = 'absolute';
-      btnPlus.style.right = '-18px';
-      btnPlus.style.top = '-18px';
-      const btnMinus = document.createElement('button');
-      btnMinus.textContent = '−';
-      btnMinus.className = 'sticker-btn sticker-minus';
-      btnMinus.style.position = 'absolute';
-      btnMinus.style.left = '-18px';
-      btnMinus.style.top = '-18px';
-      const btnDelete = document.createElement('button');
-      btnDelete.textContent = '×';
-      btnDelete.className = 'sticker-btn sticker-delete';
-      btnDelete.style.position = 'absolute';
-      btnDelete.style.right = '-18px';
-      btnDelete.style.bottom = '-18px';
-      btnDelete.onclick = e => {
-        e.stopPropagation();
-        previewArea.removeChild(wrapper);
-        stickers = stickers.filter(s => s !== wrapper);
-      };
-      // Xử lý phóng to/thu nhỏ
-      btnPlus.onclick = e => {
-        e.stopPropagation();
-        let w = parseInt(wrapper.style.width);
-        let h = parseInt(wrapper.style.height);
-        w = Math.min(w + 16, 160);
-        h = Math.min(h + 16, 160);
-        wrapper.style.width = w + 'px';
-        wrapper.style.height = h + 'px';
-      };
-      btnMinus.onclick = e => {
-        e.stopPropagation();
-        let w = parseInt(wrapper.style.width);
-        let h = parseInt(wrapper.style.height);
-        w = Math.max(w - 16, 24);
-        h = Math.max(h - 16, 24);
-        wrapper.style.width = w + 'px';
-        wrapper.style.height = h + 'px';
-      };
-      wrapper.appendChild(img);
-      wrapper.appendChild(btnPlus);
-      wrapper.appendChild(btnMinus);
-      wrapper.appendChild(btnDelete);
-      // Vị trí ban đầu
-      const rect = previewArea.getBoundingClientRect();
-      let x = e.clientX - rect.left;
-      let y = e.clientY - rect.top;
-      x = Math.max(0, Math.min(x, previewArea.offsetWidth - 48));
-      y = Math.max(0, Math.min(y, previewArea.offsetHeight - 48));
-      wrapper.style.left = x + 'px';
-      wrapper.style.top = y + 'px';
-      makeStickerDraggable(wrapper, previewArea);
-      makeStickerDraggableTouch(wrapper, previewArea); // Thêm hàm drag cho mobile
-      previewArea.appendChild(wrapper);
-      stickers.push(wrapper);
-    }
-  });
-  function makeStickerDraggable(sticker, container) {
-    let offsetX, offsetY, isDragging = false;
-    sticker.addEventListener('mousedown', e => {
-      if (e.target.classList.contains('sticker-btn')) return;
-      isDragging = true;
-      offsetX = e.offsetX;
-      offsetY = e.offsetY;
-      sticker.style.zIndex = 10;
-    });
-    document.addEventListener('mousemove', e => {
-      if (!isDragging) return;
-      const rect = container.getBoundingClientRect();
-      let x = e.clientX - rect.left - offsetX;
-      let y = e.clientY - rect.top - offsetY;
-      x = Math.max(0, Math.min(x, container.offsetWidth - sticker.offsetWidth));
-      y = Math.max(0, Math.min(y, container.offsetHeight - sticker.offsetHeight));
-      sticker.style.left = x + 'px';
-      sticker.style.top = y + 'px';
-    });
-    document.addEventListener('mouseup', () => {
-      isDragging = false;
-      sticker.style.zIndex = 1;
-    });
-  }
-  function makeStickerDraggableTouch(sticker, container) {
-    let startX, startY, origX, origY, isDragging = false;
-    sticker.addEventListener('touchstart', function(e) {
-      if (e.target.classList.contains('sticker-btn')) return;
-      isDragging = true;
-      const touch = e.touches[0];
-      startX = touch.clientX;
-      startY = touch.clientY;
-      origX = parseInt(sticker.style.left) || 0;
-      origY = parseInt(sticker.style.top) || 0;
-      sticker.style.zIndex = 10;
-    });
-    sticker.addEventListener('touchmove', function(e) {
-      if (!isDragging) return;
-      const touch = e.touches[0];
-      let x = origX + (touch.clientX - startX);
-      let y = origY + (touch.clientY - startY);
-      x = Math.max(0, Math.min(x, container.offsetWidth - sticker.offsetWidth));
-      y = Math.max(0, Math.min(y, container.offsetHeight - sticker.offsetHeight));
-      sticker.style.left = x + 'px';
-      sticker.style.top = y + 'px';
-      e.preventDefault();
-    }, { passive: false });
-    sticker.addEventListener('touchend', function() {
-      isDragging = false;
-      sticker.style.zIndex = 1;
-    });
-  }
-  const defaultFrame = 'frame1.png';
-  const photoSlots = [
-    { x: 44, y: 44, w: 593, h: 384 },
-    { x: 44, y: 472, w: 593, h: 384 },
-    { x: 44, y: 900, w: 593, h: 384 },
-    { x: 44, y: 1328, w: 593, h: 384 }
-  ];
-  const previewWidth = 340;
-  const previewHeight = 1024;
-  const scale = previewWidth / 681;
-  const previewSlots = photoSlots.map(slot => ({
-    x: Math.round(slot.x * scale),
-    y: Math.round(slot.y * scale),
-    w: Math.round(slot.w * scale),
-    h: Math.round(slot.h * scale)
-  }));
-  function cropAndDrawImage(ctx, img, slot) {
-    // Crop ảnh gốc (770x565) vào slot đúng tỉ lệ, luôn căn giữa
-    const imgW = img.width;
-    const imgH = img.height;
-    const slotRatio = slot.w / slot.h;
-    const imgRatio = imgW / imgH;
-    let sx = 0, sy = 0, sw = imgW, sh = imgH;
-    if (imgRatio > slotRatio) {
-      // Ảnh rộng hơn slot, crop 2 bên
-      sw = imgH * slotRatio;
-      sx = Math.round((imgW - sw) / 2);
-    } else {
-      // Ảnh cao hơn slot, crop trên dưới
-      sh = imgW / slotRatio;
-      sy = Math.round((imgH - sh) / 2);
-    }
-    ctx.drawImage(img, sx, sy, sw, sh, slot.x, slot.y, slot.w, slot.h);
-  }
-  function updatePreview() {
-    previewArea.innerHTML = '';
-    const canvas = document.createElement('canvas');
-    canvas.width = previewWidth;
-    canvas.height = previewHeight;
-    const ctx = canvas.getContext('2d');
-    const frameImg = new Image();
-    frameImg.src = selectedFrame; // dùng khung đã chọn
-    frameImg.onload = () => {
-      ctx.drawImage(frameImg, 0, 0, previewWidth, previewHeight);
-      let loaded = 0;
-      const imgObjs = images.map(src => {
-        const img = new Image();
-        img.src = src;
-        return img;
-      });
-      imgObjs.forEach((img, i) => {
-        img.onload = () => {
-          loaded++;
-          if (loaded === imgObjs.length) {
-            imgObjs.forEach((img, idx) => {
-              if (previewSlots[idx]) {
-                cropAndDrawImage(ctx, img, previewSlots[idx]);
+    window.addEventListener('DOMContentLoaded', () => {
+      const statusDiv = document.getElementById('downloadStatus');
+      const continueBtn = document.getElementById('continueBtn');
+      const mainArea = document.getElementById('mainDownloadArea');
+      const previewArea = document.getElementById('previewArea');
+      const downloadNewBtn = document.getElementById('downloadNewBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const frameThumbs = document.querySelectorAll('.frame-thumb');
+      const stickerThumbs = document.querySelectorAll('.sticker-thumb');
+
+      // Lấy ảnh đã chụp từ localStorage
+      const data = localStorage.getItem('photobooth_images');
+      let images = [];
+      if (data) {
+        images = JSON.parse(data);
+      }
+
+      const minImages = 2; // Số lượng ảnh tối thiểu cần có
+      // Kiểm tra số lượng ảnh và hiển thị giao diện phù hợp
+      if (!images || images.length < minImages) {
+        mainArea.style.display = 'none'; // Ẩn phần chỉnh sửa
+        statusDiv.innerHTML = `Bạn đã chụp <b>${images.length || 0}</b> ảnh. Hãy chụp đủ ${minImages} ảnh để tiếp tục!`;
+        continueBtn.style.display = 'block'; // Hiển thị nút quay lại
+        continueBtn.onclick = () => {
+          window.location.href = 'index.html'; // Chuyển hướng về trang chụp ảnh
+        };
+        return; // Dừng thực thi script nếu không đủ ảnh
+      } else {
+        mainArea.style.display = ''; // Hiển thị phần chỉnh sửa
+        statusDiv.innerHTML = `Bạn đã chụp <b>${images.length}</b> ảnh. Hãy chọn khung và tải về nhé!`;
+        continueBtn.style.display = 'none'; // Ẩn nút quay lại
+      }
+
+      // Khung mặc định được chọn ban đầu
+      let selectedFrame = frameThumbs[0] ? frameThumbs[0].getAttribute('src') : 'https://placehold.co/100x150/ffe0f0/ff6f91?text=Frame1';
+      if (frameThumbs[0]) {
+          frameThumbs[0].classList.add('selected'); // Chọn khung đầu tiên mặc định
+      }
+
+      let stickers = []; // Mảng lưu trữ các sticker đang có trên preview
+
+      // Định nghĩa các vị trí slot ảnh trên khung (tọa độ và kích thước trên khung 681x2048)
+      // Đây là các giá trị cố định dựa trên thiết kế khung ảnh của bạn
+      const photoSlots = [
+        { x: 44, y: 44, w: 593, h: 384 },
+        { x: 44, y: 472, w: 593, h: 384 },
+        { x: 44, y: 900, w: 593, h: 384 },
+        { x: 44, y: 1328, w: 593, h: 384 }
+      ];
+
+      // Kích thước canvas preview và tỷ lệ scale từ khung gốc
+      const previewWidth = 340;
+      const previewHeight = 1024; // Tỷ lệ 1:3 tương ứng với khung 681x2048
+      const scale = previewWidth / 681; // Tỷ lệ scale để hiển thị trên preview
+
+      // Tính toán các vị trí slot ảnh trên canvas preview dựa trên tỷ lệ scale
+      const previewSlots = photoSlots.map(slot => ({
+        x: Math.round(slot.x * scale),
+        y: Math.round(slot.y * scale),
+        w: Math.round(slot.w * scale),
+        h: Math.round(slot.h * scale)
+      }));
+
+      /**
+       * Cắt và vẽ ảnh vào slot trên canvas, đảm bảo đúng tỉ lệ và căn giữa.
+       * @param {CanvasRenderingContext2D} ctx - Context của canvas.
+       * @param {HTMLImageElement} img - Đối tượng ảnh gốc.
+       * @param {Object} slot - Thông tin về vị trí và kích thước slot trên canvas.
+       */
+      function cropAndDrawImage(ctx, img, slot) {
+        const imgW = img.width;
+        const imgH = img.height;
+        const slotRatio = slot.w / slot.h; // Tỷ lệ khung hình của slot
+        const imgRatio = imgW / imgH; // Tỷ lệ khung hình của ảnh gốc
+
+        let sx = 0, sy = 0, sw = imgW, sh = imgH; // Source x, y, width, height (từ ảnh gốc)
+
+        if (imgRatio > slotRatio) {
+          // Ảnh rộng hơn slot, cần crop 2 bên
+          sw = imgH * slotRatio;
+          sx = Math.round((imgW - sw) / 2);
+        } else {
+          // Ảnh cao hơn slot, cần crop trên dưới
+          sh = imgW / slotRatio;
+          sy = Math.round((imgH - sh) / 2);
+        }
+        // Vẽ ảnh đã crop vào vị trí và kích thước của slot trên canvas
+        ctx.drawImage(img, sx, sy, sw, sh, slot.x, slot.y, slot.w, slot.h);
+      }
+
+      /**
+       * Cập nhật ảnh preview trên giao diện.
+       * Hàm này sẽ vẽ khung và các ảnh đã chụp lên một canvas.
+       */
+      function updatePreview() {
+        previewArea.innerHTML = ''; // Xóa canvas cũ
+        const canvas = document.createElement('canvas');
+        canvas.width = previewWidth;
+        canvas.height = previewHeight;
+        const ctx = canvas.getContext('2d');
+
+        const frameImg = new Image();
+        frameImg.src = selectedFrame; // Sử dụng khung đã chọn
+        frameImg.onload = () => {
+          ctx.drawImage(frameImg, 0, 0, previewWidth, previewHeight); // Vẽ khung lên canvas
+
+          let loadedImages = 0;
+          const imgObjs = images.map(src => {
+            const img = new Image();
+            img.src = src;
+            return img;
+          });
+
+          // Tải và vẽ từng ảnh đã chụp vào các slot
+          imgObjs.forEach((img, i) => {
+            img.onload = () => {
+              loadedImages++;
+              if (loadedImages === imgObjs.length) {
+                // Khi tất cả ảnh đã tải xong, vẽ chúng lên canvas
+                imgObjs.forEach((loadedImg, idx) => {
+                  if (previewSlots[idx]) {
+                    cropAndDrawImage(ctx, loadedImg, previewSlots[idx]);
+                  }
+                });
+                previewArea.appendChild(canvas); // Thêm canvas vào khu vực preview
               }
-            });
-            previewArea.appendChild(canvas);
-          }
+            };
+            img.onerror = () => {
+                console.error(`Không thể tải ảnh: ${img.src}`);
+                // Có thể hiển thị placeholder hoặc thông báo lỗi trên preview
+            };
+          });
+        };
+        frameImg.onerror = () => {
+          console.error(`Không thể tải file khung: ${selectedFrame}. Hãy kiểm tra lại file này!`);
+          // Có thể hiển thị thông báo lỗi cho người dùng
+        };
+      }
+
+      // Khởi tạo preview khi trang tải xong
+      updatePreview();
+
+      // Xử lý sự kiện chọn khung
+      frameThumbs.forEach(frame => {
+        frame.addEventListener('click', () => {
+          selectedFrame = frame.getAttribute('src');
+          frameThumbs.forEach(f => f.classList.remove('selected')); // Bỏ chọn tất cả
+          frame.classList.add('selected'); // Chọn khung hiện tại
+          updatePreview(); // Cập nhật preview
+        });
+      });
+
+      // Xử lý kéo thả sticker từ danh sách sticker
+      stickerThumbs.forEach(sticker => {
+        sticker.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('stickerSrc', sticker.getAttribute('src')); // Lưu src của sticker
+        });
+      });
+
+      // Xử lý thả sticker vào khu vực preview
+      previewArea.addEventListener('dragover', e => e.preventDefault()); // Cho phép thả
+      previewArea.addEventListener('drop', e => {
+        e.preventDefault();
+        const src = e.dataTransfer.getData('stickerSrc'); // Lấy src của sticker
+        if (src) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'sticker-wrapper';
+          wrapper.style.position = 'absolute';
+          wrapper.style.width = '64px'; // Kích thước sticker ban đầu
+          wrapper.style.height = '64px';
+
+          const img = document.createElement('img');
+          img.src = src;
+          img.className = 'draggable-sticker';
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.pointerEvents = 'none'; // Quan trọng để có thể kéo wrapper
+
+          // Tạo nút phóng to/thu nhỏ/xóa
+          const btnPlus = document.createElement('button');
+          btnPlus.textContent = '+';
+          btnPlus.className = 'sticker-btn sticker-plus';
+          btnPlus.style.position = 'absolute';
+          btnPlus.style.right = '-12px'; // Vị trí nút
+          btnPlus.style.top = '-12px';
+
+          const btnMinus = document.createElement('button');
+          btnMinus.textContent = '−';
+          btnMinus.className = 'sticker-btn sticker-minus';
+          btnMinus.style.position = 'absolute';
+          btnMinus.style.left = '-12px'; // Vị trí nút
+          btnMinus.style.top = '-12px';
+
+          const btnDelete = document.createElement('button');
+          btnDelete.textContent = '×';
+          btnDelete.className = 'sticker-btn sticker-delete';
+          btnDelete.style.position = 'absolute';
+          btnDelete.style.right = '-12px'; // Vị trí nút
+          btnDelete.style.bottom = '-12px';
+
+          // Xử lý xóa sticker
+          btnDelete.onclick = e => {
+            e.stopPropagation(); // Ngăn sự kiện lan truyền ra ngoài (ví dụ: kéo)
+            previewArea.removeChild(wrapper);
+            stickers = stickers.filter(s => s !== wrapper); // Xóa khỏi mảng sticker
+          };
+
+          // Xử lý phóng to/thu nhỏ sticker
+          btnPlus.onclick = e => {
+            e.stopPropagation();
+            let w = parseInt(wrapper.style.width);
+            let h = parseInt(wrapper.style.height);
+            w = Math.min(w + 16, 200); // Tăng kích thước, giới hạn 200px
+            h = Math.min(h + 16, 200);
+            wrapper.style.width = w + 'px';
+            wrapper.style.height = h + 'px';
+          };
+          btnMinus.onclick = e => {
+            e.stopPropagation();
+            let w = parseInt(wrapper.style.width);
+            let h = parseInt(wrapper.style.height);
+            w = Math.max(w - 16, 32); // Giảm kích thước, giới hạn 32px
+            h = Math.max(h - 16, 32);
+            wrapper.style.width = w + 'px';
+            wrapper.style.height = h + 'px';
+          };
+
+          // Thêm các phần tử vào wrapper
+          wrapper.appendChild(img);
+          wrapper.appendChild(btnPlus);
+          wrapper.appendChild(btnMinus);
+          wrapper.appendChild(btnDelete);
+
+          // Đặt vị trí ban đầu của sticker (tại vị trí thả)
+          const rect = previewArea.getBoundingClientRect();
+          let x = e.clientX - rect.left - (wrapper.offsetWidth / 2); // Căn giữa sticker tại điểm thả
+          let y = e.clientY - rect.top - (wrapper.offsetHeight / 2);
+
+          // Đảm bảo sticker nằm trong giới hạn của previewArea
+          x = Math.max(0, Math.min(x, previewArea.offsetWidth - wrapper.offsetWidth));
+          y = Math.max(0, Math.min(y, previewArea.offsetHeight - wrapper.offsetHeight));
+
+          wrapper.style.left = x + 'px';
+          wrapper.style.top = y + 'px';
+
+          // Kích hoạt chức năng kéo thả cho sticker mới
+          makeStickerDraggable(wrapper, previewArea);
+          makeStickerDraggableTouch(wrapper, previewArea);
+
+          previewArea.appendChild(wrapper); // Thêm sticker vào preview
+          stickers.push(wrapper); // Thêm vào mảng sticker
+        }
+      });
+
+      /**
+       * Hàm xử lý kéo thả sticker bằng chuột (desktop).
+       * @param {HTMLElement} sticker - Element sticker cần kéo.
+       * @param {HTMLElement} container - Container chứa sticker (previewArea).
+       */
+      function makeStickerDraggable(sticker, container) {
+        let offsetX, offsetY, isDragging = false;
+
+        sticker.addEventListener('mousedown', e => {
+          // Kiểm tra nếu click vào nút điều khiển thì không kéo
+          if (e.target.classList.contains('sticker-btn')) return;
+          isDragging = true;
+          // Tính toán offset từ vị trí click đến góc trên bên trái của sticker
+          const rect = sticker.getBoundingClientRect();
+          offsetX = e.clientX - rect.left;
+          offsetY = e.clientY - rect.top;
+          sticker.style.zIndex = 10; // Đưa sticker lên trên cùng khi kéo
+          e.preventDefault(); // Ngăn chọn văn bản
+        });
+
+        document.addEventListener('mousemove', e => {
+          if (!isDragging) return;
+          const containerRect = container.getBoundingClientRect();
+          let x = e.clientX - containerRect.left - offsetX;
+          let y = e.clientY - containerRect.top - offsetY;
+
+          // Giới hạn vị trí sticker trong container
+          x = Math.max(0, Math.min(x, container.offsetWidth - sticker.offsetWidth));
+          y = Math.max(0, Math.min(y, container.offsetHeight - sticker.offsetHeight));
+
+          sticker.style.left = x + 'px';
+          sticker.style.top = y + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+          isDragging = false;
+          sticker.style.zIndex = 1; // Đưa sticker về z-index bình thường
+        });
+      }
+
+      /**
+       * Hàm xử lý kéo thả sticker bằng cảm ứng (mobile).
+       * @param {HTMLElement} sticker - Element sticker cần kéo.
+       * @param {HTMLElement} container - Container chứa sticker (previewArea).
+       */
+      function makeStickerDraggableTouch(sticker, container) {
+        let startX, startY, origX, origY, isDragging = false;
+
+        sticker.addEventListener('touchstart', function(e) {
+          if (e.target.classList.contains('sticker-btn')) return;
+          isDragging = true;
+          const touch = e.touches[0];
+          startX = touch.clientX;
+          startY = touch.clientY;
+          // Lấy vị trí hiện tại của sticker
+          origX = parseInt(sticker.style.left) || 0;
+          origY = parseInt(sticker.style.top) || 0;
+          sticker.style.zIndex = 10;
+          e.preventDefault(); // Ngăn cuộn trang khi kéo
+        }, { passive: false }); // `passive: false` để `preventDefault` hoạt động
+
+        sticker.addEventListener('touchmove', function(e) {
+          if (!isDragging) return;
+          const touch = e.touches[0];
+          let x = origX + (touch.clientX - startX);
+          let y = origY + (touch.clientY - startY);
+
+          const containerRect = container.getBoundingClientRect();
+          // Giới hạn vị trí sticker trong container
+          x = Math.max(0, Math.min(x, container.offsetWidth - sticker.offsetWidth));
+          y = Math.max(0, Math.min(y, container.offsetHeight - sticker.offsetHeight));
+
+          sticker.style.left = x + 'px';
+          sticker.style.top = y + 'px';
+          e.preventDefault();
+        }, { passive: false });
+
+        sticker.addEventListener('touchend', function() {
+          isDragging = false;
+          sticker.style.zIndex = 1;
+        });
+      }
+
+      // Xử lý nút "Tải xuống"
+      downloadNewBtn.addEventListener('click', function () {
+        if (!images || images.length < 1) {
+          alert('Bạn cần chụp ít nhất 1 ảnh để tải về!'); // Sử dụng alert tạm thời, nên thay bằng modal UI
+          return;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 681; // Kích thước canvas cuối cùng cho ảnh tải về
+        canvas.height = 2048;
+        const ctx = canvas.getContext('2d');
+
+        const frameImg = new Image();
+        frameImg.src = selectedFrame;
+        frameImg.onload = function () {
+          ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height); // Vẽ khung lên canvas
+
+          let loadedImages = 0;
+          const imgObjs = images.map(src => {
+            const img = new Image();
+            img.src = src;
+            return img;
+          });
+
+          imgObjs.forEach((img, i) => {
+            img.onload = function () {
+              loadedImages++;
+              if (loadedImages === imgObjs.length) {
+                // Khi tất cả ảnh đã tải xong, vẽ chúng vào các slot
+                for (let idx = 0; idx < imgObjs.length; idx++) {
+                  if (photoSlots[idx]) {
+                    const slot = photoSlots[idx];
+                    const originalImg = imgObjs[idx];
+
+                    // --- CROP ẢNH VỀ ĐÚNG TỶ LỆ CỦA SLOT (ví dụ: 593x384) ---
+                    const targetW = slot.w;
+                    const targetH = slot.h;
+                    const targetRatio = targetW / targetH;
+
+                    let sx = 0, sy = 0, sw = originalImg.width, sh = originalImg.height;
+                    const imgRatio = originalImg.width / originalImg.height;
+
+                    if (imgRatio > targetRatio) {
+                      // Ảnh rộng hơn slot, crop 2 bên
+                      sw = originalImg.height * targetRatio;
+                      sx = (originalImg.width - sw) / 2;
+                    } else if (imgRatio < targetRatio) {
+                      // Ảnh cao hơn slot, crop trên dưới
+                      sh = originalImg.width / targetRatio;
+                      sy = (originalImg.height - sh) / 2;
+                    }
+
+                    // Tạo canvas phụ để crop ảnh đúng tỷ lệ trước khi vẽ vào slot
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = targetW;
+                    tempCanvas.height = targetH;
+                    const tctx = tempCanvas.getContext('2d');
+                    tctx.drawImage(originalImg, sx, sy, sw, sh, 0, 0, targetW, targetH);
+
+                    // Vẽ ảnh đã crop từ tempCanvas vào vị trí slot trên canvas chính
+                    ctx.drawImage(tempCanvas, slot.x, slot.y, slot.w, slot.h);
+                  }
+                }
+
+                // Vẽ các sticker lên ảnh cuối cùng
+                stickers.forEach(stickerWrapper => {
+                  const stickerImg = stickerWrapper.querySelector('.draggable-sticker');
+                  const x = parseInt(stickerWrapper.style.left) || 0;
+                  const y = parseInt(stickerWrapper.style.top) || 0;
+                  const width = parseInt(stickerWrapper.style.width) || 0;
+                  const height = parseInt(stickerWrapper.style.height) || 0;
+
+                  // Scale vị trí và kích thước sticker từ preview sang canvas tải về
+                  const scaledX = x / scale;
+                  const scaledY = y / scale;
+                  const scaledWidth = width / scale;
+                  const scaledHeight = height / scale;
+
+                  ctx.drawImage(stickerImg, scaledX, scaledY, scaledWidth, scaledHeight);
+                });
+
+                // Tạo link tải ảnh và tự động click
+                const a = document.createElement('a');
+                a.href = canvas.toDataURL('image/png');
+                a.download = `photobooth_finnbooth.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              }
+            };
+            img.onerror = () => {
+                console.error(`Không thể tải ảnh gốc: ${img.src}`);
+            };
+          });
+        };
+        frameImg.onerror = function () {
+          alert('Không thể tải file khung. Hãy kiểm tra lại file này!'); // Sử dụng alert tạm thời
         };
       });
-    };
-    frameImg.onerror = () => {
-      alert('Không thể tải file khung (frame1.png). Hãy kiểm tra lại file này!');
-    };
-    if (!images || images.length < 2) {
-      alert('Bạn cần chụp đủ 2 ảnh để tải về!');
-      return;
-    }
-  }
-  updatePreview();
-  // Xóa sự kiện nút cũ nếu có
-  const oldBtn = document.getElementById('downloadBtn');
-  if (oldBtn) oldBtn.remove();
-  // Thêm sự kiện cho nút mới
-  document.getElementById('downloadNewBtn').addEventListener('click', function () {
-    if (!images || images.length < 1) {
-      alert('Bạn cần chụp ít nhất 1 ảnh để tải về!');
-      return;
-    }
-    const canvas = document.createElement('canvas');
-    canvas.width = 681;
-    canvas.height = 2048;
-    const ctx = canvas.getContext('2d');
-    const frameImg = new Image();
-    frameImg.src = selectedFrame;
-    frameImg.onload = function () {
-      ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
-      let loaded = 0;
-      const imgObjs = images.map(src => {
-        const img = new Image();
-        img.src = src;
-        return img;
-      });
-      imgObjs.forEach((img, i) => {
-        img.onload = function () {
-          loaded++;
-          if (loaded === imgObjs.length) {
-            for (let idx = 0; idx < imgObjs.length; idx++) {
-              if (photoSlots[idx]) {
-                const slot = photoSlots[idx];
-                // --- CROP ẢNH VỀ ĐÚNG TỶ LỆ 741x483 (1.534:1) ---
-                const targetW = 741, targetH = 483, targetRatio = targetW / targetH;
-                let sx = 0, sy = 0, sw = img.width, sh = img.height;
-                const imgRatio = img.width / img.height;
-                if (imgRatio > targetRatio) {
-                  // Ảnh rộng hơn, crop 2 bên
-                  sw = img.height * targetRatio;
-                  sx = (img.width - sw) / 2;
-                } else if (imgRatio < targetRatio) {
-                  // Ảnh cao hơn, crop trên dưới
-                  sh = img.width / targetRatio;
-                  sy = (img.height - sh) / 2;
-                }
-                // Tạo canvas phụ crop đúng tỷ lệ
-                const tempCanvas = document.createElement('canvas');
-                tempCanvas.width = targetW;
-                tempCanvas.height = targetH;
-                const tctx = tempCanvas.getContext('2d');
-                tctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
-                // Tính toán scale để fit vào slot, căn giữa
-                const slotRatio = slot.w / slot.h;
-                let drawW = slot.w, drawH = slot.h, dx = slot.x, dy = slot.y;
-                if (slotRatio > targetRatio) {
-                  drawH = slot.h;
-                  drawW = slot.h * targetRatio;
-                  dx = slot.x + (slot.w - drawW) / 2;
-                } else if (slotRatio < targetRatio) {
-                  drawW = slot.w;
-                  drawH = slot.w / targetRatio;
-                  dy = slot.y + (slot.h - drawH) / 2;
-                }
-                ctx.drawImage(tempCanvas, 0, 0, targetW, targetH, dx, dy, drawW, drawH);
-              }
-            }
-            stickers.forEach(sticker => {
-              const x = parseInt(sticker.style.left) || 0;
-              const y = parseInt(sticker.style.top) || 0;
-              ctx.drawImage(sticker, x, y, 48, 48);
-            });
-            const a = document.createElement('a');
-            a.href = canvas.toDataURL('image/png');
-            a.download = `photobooth_all.png`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-          }
-        };
-      });
-    };
-    frameImg.onerror = function () {
-      alert('Không thể tải file khung (frame1.png). Hãy kiểm tra lại file này!');
-    };
-  });
-  document.getElementById('clearBtn').onclick = () => {
-    localStorage.removeItem('photobooth_images');
-    location.reload();
-  };
-});
-// ...JS kết thúc...
+
+      // Xử lý nút "Xóa tất cả ảnh"
+      clearBtn.onclick = () => {
+        localStorage.removeItem('photobooth_images'); // Xóa dữ liệu ảnh
+        location.reload(); // Tải lại trang
+      };
+    });
   </script>
 </body>
 </html>
