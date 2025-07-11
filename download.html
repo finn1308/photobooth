@@ -96,7 +96,20 @@
     .sticker-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
     .sticker-thumb { width: 48px; height: 48px; object-fit: contain; border-radius: 8px; border: 2px solid #ffd6f7; cursor: grab; background: #fff; }
     .sticker-thumb:hover { border: 2px solid #7ed6df; }
-    .preview-area { min-height: 1040px; min-width: 360px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; background: #fffafd; border-radius: 12px; box-shadow: 0 2px 12px #ffd6f7; margin-bottom: 12px; position: relative; }
+    .preview-area {
+  width: 770px;
+  height: 565px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: #fffafd;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #ffd6f7;
+  margin-bottom: 12px;
+  position: relative;
+}
+
   </style>
 </head>
 <body>
@@ -258,8 +271,8 @@ window.addEventListener('DOMContentLoaded', () => {
   function updatePreview() {
     previewArea.innerHTML = '';
     const canvas = document.createElement('canvas');
-    canvas.width = previewWidth;
-    canvas.height = previewHeight;
+    canvas.width = 770;
+    canvas.height = 565;
     const ctx = canvas.getContext('2d');
     const frameImg = new Image();
     frameImg.src = defaultFrame;
