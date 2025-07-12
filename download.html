@@ -591,7 +591,7 @@
 
       /**
        * Cập nhật ảnh preview trên giao diện.
-       * Hàm này sẽ vẽ khung và các ảnh đã chụp lên một canvas.
+       * Hàm này sẽ vẽ các ảnh đã chụp, sticker, và cuối cùng là khung ảnh lên một canvas.
        */
       function updatePreview() {
         previewArea.innerHTML = ''; // Xóa canvas cũ
@@ -602,43 +602,88 @@
 
         const frameImg = new Image();
         frameImg.src = selectedFrame; // Sử dụng khung đã chọn
-        frameImg.onload = () => {
-          // Vẽ khung trước, sau đó vẽ ảnh lên trên
-          ctx.drawImage(frameImg, 0, 0, previewWidth, previewHeight);
 
-          let loadedImages = 0;
-          const imgObjs = images.map(src => {
-            const img = new Image();
-            img.src = src;
-            return img;
-          });
+        let loadedImagesCount = 0;
+        const imgObjs = images.map(src => {
+          const img = new Image();
+          img.src = src;
+          return img;
+        });
 
-          // Tải và vẽ từng ảnh đã chụp vào các slot
-          imgObjs.forEach((img, i) => {
-            img.onload = () => {
-              loadedImages++;
-              if (loadedImages === imgObjs.length) {
-                // Khi tất cả ảnh đã tải xong, vẽ chúng lên canvas
-                imgObjs.forEach((loadedImg, idx) => {
-                  if (previewSlots[idx]) {
-                    // Gọi hàm cropAndDrawImage với bán kính bo tròn
+        // Hàm này sẽ được gọi sau khi tất cả ảnh đã tải và vẽ
+        const drawPreviewContent = () => {
+            // Bước 1: Vẽ tất cả ảnh đã chụp vào các slot
+            imgObjs.forEach((loadedImg, idx) => {
+                if (previewSlots[idx]) {
                     cropAndDrawImage(ctx, loadedImg, previewSlots[idx], imageBorderRadius * scale); // Scale bán kính cho preview
-                  }
+                }
+            });
+
+            // Bước 2: Vẽ các sticker lên ảnh
+            stickers.forEach(stickerWrapper => {
+                const stickerImg = stickerWrapper.querySelector('.draggable-sticker');
+                const x = parseInt(stickerWrapper.style.left) || 0;
+                const y = parseInt(stickerWrapper.style.top) || 0;
+                const width = parseInt(stickerWrapper.style.width) || 0;
+                const height = parseInt(stickerWrapper.style.height) || 0;
+                ctx.drawImage(stickerImg, x, y, width, height); // Vẽ sticker lên canvas preview
+            });
+
+            // Bước 3: Vẽ khung lên trên cùng
+            ctx.drawImage(frameImg, 0, 0, previewWidth, previewHeight);
+
+            previewArea.appendChild(canvas); // Thêm canvas vào khu vực preview
+        };
+
+        // Đảm bảo tất cả ảnh và khung đã tải xong trước khi vẽ
+        const promises = imgObjs.map(img => new Promise(resolve => {
+            if (img.complete) {
+                resolve();
+            } else {
+                img.onload = resolve;
+                img.onerror = () => {
+                    console.error(`Không thể tải ảnh: ${img.src}`);
+                    resolve(); // Vẫn resolve để không chặn quá trình
+                };
+            }
+        }));
+
+        Promise.all(promises).then(() => {
+            if (frameImg.complete) {
+                drawPreviewContent();
+            } else {
+                frameImg.onload = drawPreviewContent;
+                frameImg.onerror = () => {
+                    console.error(`Không thể tải file khung: ${selectedFrame}. Hãy kiểm tra lại file này!`);
+                };
+            }
+        });
+
+        // Nếu không có ảnh nào, vẫn phải vẽ khung (và sticker nếu có)
+        if (images.length === 0) {
+            frameImg.onload = () => {
+                // Vẽ sticker nếu có (trước khung)
+                stickers.forEach(stickerWrapper => {
+                    const stickerImg = stickerWrapper.querySelector('.draggable-sticker');
+                    const x = parseInt(stickerWrapper.style.left) || 0;
+                    const y = parseInt(stickerWrapper.style.top) || 0;
+                    const width = parseInt(stickerWrapper.style.width) || 0;
+                    const height = parseInt(stickerWrapper.style.height) || 0;
+                    ctx.drawImage(stickerImg, x, y, width, height);
                 });
-                previewArea.appendChild(canvas); // Thêm canvas vào khu vực preview
-              }
+                // Vẽ khung lên trên cùng
+                ctx.drawImage(frameImg, 0, 0, previewWidth, previewHeight);
+                previewArea.appendChild(canvas);
             };
-            img.onerror = () => {
-                console.error(`Không thể tải ảnh: ${img.src}`);
-                // Có thể hiển thị placeholder hoặc thông báo lỗi trên preview
+            frameImg.onerror = () => {
+                console.error(`Không thể tải file khung: ${selectedFrame}. Hãy kiểm tra lại file này!`);
             };
-          });
-        };
-        frameImg.onerror = () => {
-          console.error(`Không thể tải file khung: ${selectedFrame}. Hãy kiểm tra lại file này!`);
-          // Có thể hiển thị thông báo lỗi cho người dùng
-        };
+            if (frameImg.complete) {
+                frameImg.onload();
+            }
+        }
       }
+
 
       // Khởi tạo preview khi trang tải xong
       updatePreview();
@@ -856,7 +901,8 @@
       // Xử lý nút "Tải xuống"
       downloadNewBtn.addEventListener('click', function () {
         if (!images || images.length < 1) {
-          alert('Bạn cần chụp ít nhất 1 ảnh để tải về!'); // Sử dụng alert tạm thời, nên thay bằng modal UI
+          // Thay thế alert bằng một modal UI tùy chỉnh nếu có thể
+          alert('Bạn cần chụp ít nhất 1 ảnh để tải về!');
           return;
         }
 
@@ -867,25 +913,25 @@
 
         const frameImg = new Image();
         frameImg.src = selectedFrame;
-        frameImg.onload = function () {
-          ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height); // Vẽ khung lên canvas
 
-          let loadedImages = 0;
-          const imgObjs = images.map(src => {
+        // Đảm bảo tất cả ảnh và khung đã tải xong trước khi vẽ
+        const promises = images.map(src => new Promise(resolve => {
             const img = new Image();
             img.src = src;
-            return img;
-          });
+            img.onload = resolve;
+            img.onerror = () => {
+                console.error(`Không thể tải ảnh gốc: ${img.src}`);
+                resolve(); // Vẫn resolve để không chặn quá trình
+            };
+        }));
 
-          imgObjs.forEach((img, i) => {
-            img.onload = function () {
-              loadedImages++;
-              if (loadedImages === imgObjs.length) {
-                // Khi tất cả ảnh đã tải xong, vẽ chúng vào các slot
-                for (let idx = 0; idx < imgObjs.length; idx++) {
-                  if (photoSlots[idx]) {
+        Promise.all(promises).then(() => {
+            // Bước 1: Vẽ tất cả ảnh đã chụp vào các slot
+            images.forEach((src, idx) => {
+                const originalImg = new Image();
+                originalImg.src = src; // Tải lại ảnh để đảm bảo đã có trong bộ nhớ
+                if (photoSlots[idx]) {
                     const slot = photoSlots[idx];
-                    const originalImg = imgObjs[idx];
 
                     // --- CROP ẢNH VỀ ĐÚNG TỶ LỆ CỦA SLOT (ví dụ: 593x384) ---
                     const targetW = slot.w;
@@ -930,25 +976,29 @@
 
                     ctx.drawImage(tempCanvas, slot.x, slot.y, slot.w, slot.h);
                     ctx.restore(); // Khôi phục trạng thái canvas
-                  }
                 }
+            });
 
-                // Vẽ các sticker lên ảnh cuối cùng
-                stickers.forEach(stickerWrapper => {
-                  const stickerImg = stickerWrapper.querySelector('.draggable-sticker');
-                  const x = parseInt(stickerWrapper.style.left) || 0;
-                  const y = parseInt(stickerWrapper.style.top) || 0;
-                  const width = parseInt(stickerWrapper.style.width) || 0;
-                  const height = parseInt(stickerWrapper.style.height) || 0;
+            // Bước 2: Vẽ các sticker lên ảnh cuối cùng
+            stickers.forEach(stickerWrapper => {
+              const stickerImg = stickerWrapper.querySelector('.draggable-sticker');
+              const x = parseInt(stickerWrapper.style.left) || 0;
+              const y = parseInt(stickerWrapper.style.top) || 0;
+              const width = parseInt(stickerWrapper.style.width) || 0;
+              const height = parseInt(stickerWrapper.style.height) || 0;
 
-                  // Scale vị trí và kích thước sticker từ preview sang canvas tải về
-                  const scaledX = x / scale;
-                  const scaledY = y / scale;
-                  const scaledWidth = width / scale;
-                  const scaledHeight = height / scale;
+              // Scale vị trí và kích thước sticker từ preview sang canvas tải về
+              const scaledX = x / scale;
+              const scaledY = y / scale;
+              const scaledWidth = width / scale;
+              const scaledHeight = height / scale;
 
-                  ctx.drawImage(stickerImg, scaledX, scaledY, scaledWidth, scaledHeight);
-                });
+              ctx.drawImage(stickerImg, scaledX, scaledY, scaledWidth, scaledHeight);
+            });
+
+            // Bước 3: Vẽ khung lên trên cùng
+            frameImg.onload = function () {
+                ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
 
                 // Tạo link tải ảnh và tự động click
                 const a = document.createElement('a');
@@ -957,16 +1007,19 @@
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-              }
             };
-            img.onerror = () => {
-                console.error(`Không thể tải ảnh gốc: ${img.src}`);
+            frameImg.onerror = function () {
+                // Thay thế alert bằng một modal UI tùy chỉnh nếu có thể
+                alert('Không thể tải file khung. Hãy kiểm tra lại file này!');
             };
-          });
-        };
-        frameImg.onerror = function () {
-          alert('Không thể tải file khung. Hãy kiểm tra lại file này!'); // Sử dụng alert tạm thời
-        };
+            // Nếu ảnh khung đã load xong (từ cache), gọi onload thủ công
+            if (frameImg.complete) {
+                frameImg.onload();
+            }
+        }).catch(error => {
+            console.error("Lỗi khi tải ảnh hoặc khung:", error);
+            // Có thể hiển thị thông báo lỗi cho người dùng
+        });
       });
 
       // Xử lý nút "Xóa tất cả ảnh"

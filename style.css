@@ -504,3 +504,11 @@ body {
   z-index: 2;
   text-align: center;
 }
+/* Style cho thông báo không có ảnh đã chụp */
+.no-captured {
+  text-align: center;
+  color: #3bb6c5;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 24px;
+}

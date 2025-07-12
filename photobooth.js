@@ -20,8 +20,18 @@ let capturedImages = []; // Mảng chứa các ảnh đã chụp (dạng Data UR
 let selectedFilter = 'none'; // Filter màu đang chọn
 let maxPhotos = parseInt(photoCountSelect.value); // Số lượng ảnh tối đa cần chụp, lấy từ giá trị mặc định của select
 
-// Danh sách các khung ảnh có sẵn và sticker/chữ đã được loại bỏ
-// vì chức năng này sẽ được xử lý trên trang download.html
+// Tải hình ảnh con gấu cho bộ lọc (không sử dụng nữa theo yêu cầu mới)
+// const bearImage = new Image();
+// bearImage.src = 'images-removebg-preview.png'; 
+// bearImage.onload = () => {
+//   console.log('Bear image loaded successfully.');
+//   if (selectedFilter === 'bear') {
+//     updateFilterOverlay();
+//   }
+// };
+// bearImage.onerror = () => {
+//   console.error('Failed to load bear image. Please check the file path and name.');
+// };
 
 // Hiệu ứng nhấn cho các nút
 [manualBtn, autoBtn, retryBtn, uploadBtn, continueBtn].forEach(btn => {
@@ -41,12 +51,12 @@ async function startCamera() {
     // Hiển thị thông báo lỗi nếu không thể truy cập camera
     document.getElementById('cameraError').style.display = 'block';
     document.getElementById('cameraError').innerHTML =
-      'Không thể truy cập camera!<br>\uD83D\uDEAB<br>\u003Cul style="text-align:left;font-size:14px;line-height:1.5;max-width:220px;margin:8px auto 0 auto;"\u003E' +
+      'Không thể truy cập camera!<br>🚫<br><ul style="text-align:left;font-size:14px;line-height:1.5;max-width:220px;margin:8px auto 0 auto;">' +
       '<li>Kiểm tra quyền truy cập camera trên trình duyệt.</li>' +
       '<li>Nên chạy trang web qua localhost hoặc server, không mở file trực tiếp.</li>' +
       '<li>Đảm bảo không có ứng dụng khác đang sử dụng camera.</li>' +
       '<li>Nếu vẫn lỗi, hãy thử tải ảnh lên từ máy.</li>' +
-      '\u003C/ul\u003E';
+      '</ul>';
   }
 }
 
@@ -81,9 +91,16 @@ function captureFromWebcam() {
   canvas.height = targetH;
   const ctx = canvas.getContext('2d');
   
+  // Áp dụng lật ngang cho canvas trước khi vẽ ảnh từ webcam
+  ctx.translate(targetW, 0); // Di chuyển điểm gốc sang phải
+  ctx.scale(-1, 1); // Lật theo chiều ngang
+
   // Vẽ ảnh từ video lên canvas, đã crop
   ctx.drawImage(video, sx, sy, sw, sh, 0, 0, targetW, targetH);
   
+  // Đặt lại transform để các thao tác vẽ sau không bị ảnh hưởng
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
   // Áp dụng filter màu đã chọn lên ảnh
   applyFilterToCanvas(ctx, targetW, targetH);
   
@@ -93,53 +110,25 @@ function captureFromWebcam() {
 
 // Hàm áp dụng filter màu lên canvas
 function applyFilterToCanvas(ctx, w, h) {
+  // Đặt lại filter của canvas trước khi áp dụng filter mới
+  ctx.filter = 'none'; 
+  ctx.globalAlpha = 1; // Đặt lại globalAlpha
+
   switch(selectedFilter) {
-    case 'dreamy':
-      ctx.globalAlpha = 0.35;
-      ctx.fillStyle = '#b2f7ef'; // Màu xanh nhạt
-      ctx.fillRect(0,0,w,h);
-      ctx.globalAlpha = 1;
-      break;
-    case 'fresh':
-      ctx.globalAlpha = 0.25;
-      ctx.fillStyle = '#7ed6df'; // Màu xanh tươi
-      ctx.fillRect(0,0,w,h);
-      ctx.globalAlpha = 1;
-      break;
-    case 'warm':
-      ctx.globalAlpha = 0.18;
-      ctx.fillStyle = '#ffe4b5'; // Màu vàng ấm
-      ctx.fillRect(0,0,w,h);
-      ctx.globalAlpha = 1;
-      break;
-    case 'film':
-      ctx.globalAlpha = 0.18;
-      ctx.fillStyle = '#e0e0e0'; // Màu xám nhạt (hiệu ứng film)
-      ctx.fillRect(0,0,w,h);
-      ctx.globalAlpha = 1;
-      break;
-    case 'natural':
-      ctx.globalAlpha = 0.12;
-      ctx.fillStyle = '#eaffd0'; // Màu xanh lá nhạt tự nhiên
-      ctx.fillRect(0,0,w,h);
-      ctx.globalAlpha = 1;
-      break;
-    case 'vintage':
-      ctx.globalAlpha = 0.18;
-      ctx.fillStyle = '#f5e6c8'; // Màu be cổ điển
-      ctx.fillRect(0,0,w,h);
-      ctx.globalAlpha = 1;
-      break;
     case 'bw':
-      ctx.globalAlpha = 1;
       ctx.filter = 'grayscale(1)'; // Chuyển sang đen trắng
-      ctx.drawImage(ctx.canvas, 0, 0, w, h); // Vẽ lại ảnh đã filter
-      ctx.filter = 'none'; // Reset filter
+      break;
+    case 'auto':
+      // Áp dụng các hiệu ứng làm đẹp: làm sáng, tăng tương phản, làm mịn nhẹ
+      ctx.filter = 'brightness(1.15) contrast(1.1) blur(0.5px)'; 
       break;
     default:
-      // Không áp dụng filter nào
+      // Không áp dụng filter nào (none)
       break;
   }
+  // Vẽ lại ảnh để áp dụng filter
+  ctx.drawImage(ctx.canvas, 0, 0, w, h);
+  ctx.filter = 'none'; // Reset filter để không ảnh hưởng đến các lần vẽ sau
 }
 
 // Hàm hiển thị danh sách ảnh đã chụp/tải lên
@@ -284,29 +273,17 @@ function updateFilterOverlay() {
   filterOverlay.style.filter = ''; // Xóa filter
   filterOverlay.style.backdropFilter = ''; // Xóa backdrop-filter
   video.style.filter = ''; // Đảm bảo reset filter trên video element
+  filterOverlay.style.backgroundImage = ''; // Xóa hình ảnh nền cũ
+  filterOverlay.style.backgroundColor = ''; // Đảm bảo không có màu nền mặc định
 
   switch(selectedFilter) {
-    case 'dreamy':
-      filterOverlay.style.background = 'rgba(178,247,239,0.35)';
-      break;
-    case 'fresh':
-      filterOverlay.style.background = 'rgba(126,214,223,0.25)';
-      break;
-    case 'warm':
-      filterOverlay.style.background = 'rgba(255,228,181,0.18)';
-      break;
-    case 'film':
-      filterOverlay.style.background = 'rgba(224,224,224,0.18)';
-      break;
-    case 'natural':
-      filterOverlay.style.background = 'rgba(234,255,208,0.12)';
-      break;
-    case 'vintage':
-      filterOverlay.style.background = 'rgba(245,230,200,0.18)';
-      break;
     case 'bw':
       // Áp dụng grayscale filter trực tiếp lên video element
       video.style.filter = 'grayscale(1)';
+      break;
+    case 'auto':
+      // Áp dụng các hiệu ứng làm đẹp cho video trực tiếp
+      video.style.filter = 'brightness(1.15) contrast(1.1) blur(0.5px)';
       break;
     default:
       // 'none' case, đã reset ở trên
@@ -379,7 +356,7 @@ window.addEventListener('load', () => {
     capturedImages = storedImages;
   }
   // Khôi phục giá trị maxPhotos từ Local Storage hoặc dùng mặc định
-  const storedPhotoCount = localStorage.getItem('photobooth_maxPhotos');
+  const storedPhotoCount = localStorage.getItem('photobooth_maxPhotos'); 
   if (storedPhotoCount) {
     photoCountSelect.value = storedPhotoCount;
     maxPhotos = parseInt(storedPhotoCount);
